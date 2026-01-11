@@ -53,7 +53,6 @@ const InputTemplate = forwardRef<InputRefProps, TemplateProps>(({
     const labelRef = useRef<any>("")
     const bgColor = inputStore.backgroundColor
     const handlePreInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log('the string value is', e.target.value)
         const evalue = e.target.value
         // inputStore.currentValue = evalue
         if (maxLength && evalue.length == maxLength + 1) {
@@ -76,19 +75,16 @@ const InputTemplate = forwardRef<InputRefProps, TemplateProps>(({
     }))
 
     const handleBlur = () => {
-        // console.log('blurred')
         const data = inputStore.getSnapshot()
-        onBlur?.({ currentValue: value, allData: data as Record<string, any> | undefined })
+        onBlur?.({ currentValue: value ?? "", allData: data as Record<string, any> })
     }
     const handleFocus = () => {
-        // console.log('blurred')
         onFocus?.(name)
     }
     const handleKeyPresses = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-            console.log('enter pressed')
             const data = inputStore.getSnapshot()
-            onEnterPress?.({ currentValue: value, allData: data as Record<string, any> | undefined })
+            onEnterPress?.({ currentValue: value ?? "", allData: data as Record<string, any> })
         }
     }
     const [labelWidth, setLabelWidth] = useState<number | null>(null);
@@ -100,7 +96,6 @@ const InputTemplate = forwardRef<InputRefProps, TemplateProps>(({
     }, [value, placeholder, hideElement]);
     return (
         <div className={`relative w-full group ${containerStyles}`} /* onFocus={() => setFocusInputKey(name)} */>
-            {/* {console.log('thev valueof ', inputRef.current?.disabled)} */}
             <input
                 type={type}
                 id={`floating_input_${name}`}
@@ -224,7 +219,6 @@ export default memo(InputTemplate)
 //     }, [value, placeholder, hideElement]);
 //     return (
 //         <div className={`relative w-full group ${containerStyles}`} onFocus={() => setFocusInputKey(name)}>
-//             {/* {console.log('thev valueof ', placeholder, type)} */}
 //             <input
 //                 type={type}
 //                 id={`floating_input_${name}`}

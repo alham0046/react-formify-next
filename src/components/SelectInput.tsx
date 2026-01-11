@@ -112,8 +112,6 @@ const SelectInput: FC<SelectProps> = ({
 
     return (
         <div style={{ display: hiddenValue ? 'none' : 'block' }}>
-            {/* {console.log('here is select input chat is', name, placeholder, staticOptions, disabledValue, hiddenValue)} */}
-            {/* {console.log('rendering SelectInput')} */}
             <SelectTemplate
                 name={modifiedName}
                 placeholder={placeholder}
@@ -265,7 +263,6 @@ export default MemoizedSelectInput;
 
 //     return (
 //         <div style={{ display: hiddenValue ? 'none' : 'block' }}>
-//             {/* {console.log('here is select input is')} */}
 //             <SelectTemplate
 //                 name={name!}
 //                 value={value}

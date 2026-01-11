@@ -89,7 +89,6 @@ const SubmitButton = forwardRef<SubmitButtonRef, SubmitProps>((
       setOpenModal(true)
       return
     }
-    // console.log('the submit is', data)
     // onClick && onClick({ data, resetForm })
     // 🔹 CASE 2 & 3: onClick exists
     if (onClick) {

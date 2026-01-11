@@ -3,7 +3,6 @@ import { inputStore } from "src/store/InputStore";
 
 export const useSetEditData = (data: Record<string, any>, resetOnClose: boolean = true) => {
     useEffect(() => {
-        console.log("useSetEditData", data)
         inputStore.setEditData(data)
         return () => {
             if (!resetOnClose) return

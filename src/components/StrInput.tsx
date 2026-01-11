@@ -47,7 +47,6 @@ const StrInput = forwardRef<InputRefProps, InputProps>(({
 
     useEffect(() => {
         // inputStore.currentValue = value
-        console.log('rendering StrInput useEffect', inputStore.getSnapshot())
         onChange?.(value)  // Pass null as no event.data
     }, [value])
 
@@ -60,7 +59,6 @@ const StrInput = forwardRef<InputRefProps, InputProps>(({
 
     return (
         <div style={{ display: hiddenValue ? 'none' : 'block' }}>
-            {/* {console.log('rendering StrInput', modifiedName)} */}
             <InputTemplate
                 ref={ref}
                 name={modifiedName}

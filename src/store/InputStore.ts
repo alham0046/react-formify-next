@@ -80,12 +80,10 @@ class InputStore {
 
 
   getSnapshot = () => {
-    // console.log("getting input store snapshot")
     return this.state
   }
 
   initializeInputStore(mode : "edit" | "default") {
-    // console.log("initializing input store")
     this.state.inputData = {}
     if (mode === "edit") this.isEditMode = true
   }
@@ -131,7 +129,6 @@ class InputStore {
       }
       else {
         if (this.listeners.has(path)) {
-          // console.log('the path is', path)
           this.currentValue = value
           this.notify(path) // queued because batching = true
         }
@@ -146,7 +143,6 @@ class InputStore {
     if (this.isEditMode) {
       this.setNestedValue(this.state.initialData, key, value)
     }
-    // console.log("setting initial value", key, value)
     this.currentValue = value
     this.notify(key)
   }
@@ -158,7 +154,6 @@ class InputStore {
     const prev = this.getNestedValue(inputData, key)
     this.setNestedValue(inputData, key, value)
     if (prev !== value) {
-      console.log("triggering setvalue", value, prev, this.isEditMode)
       this.notify(key)
     }
     if (!this.isEditMode) return
@@ -166,17 +161,14 @@ class InputStore {
     // if (initialData![key] === undefined) this.setNestedValue(initialData, key, value)
     const initial = this.getNestedValue(this.state.initialData, key)
     if (initial === undefined) this.setNestedValue(this.state.initialData, key, value)
-    console.log("checking setvalue initial value", initial, value, key)
     if (value !== initial) this.state.editedKeys.add(key)
     else this.state.editedKeys.delete(key)
   }
 
   getValue(key: string) {
-    // console.log("getting input store value", key, this.listeners)
     return this.getNestedValue(this.state.inputData, key)
   }
   getHookValue(key: string) {
-    // console.log("getting input store value", key, this.state)
     const hookValue = this.getNestedValue(this.state.inputData, key)
     return hookValue
   }
@@ -194,7 +186,6 @@ class InputStore {
         }
       }
       const data = structuredClone(nextData ?? this.rawData ?? {})
-      // console.log(data)
       this.state = {
       inputData: data,
       initialData: this.isEditMode ? structuredClone(data) : null,
@@ -255,7 +246,6 @@ class InputStore {
 
   getArrayItems(path: string) {
     const arr = this.arrayItems.get(path)
-    // console.log("getting array items", path, arr)
     return arr
   }
 
@@ -268,7 +258,6 @@ class InputStore {
     : [...prev, value]
     
     this.arrayItems.set(path, next)
-    console.log("adding array item", path, this.arrayItems)
     this.notify(path)
   }
 
@@ -288,7 +277,6 @@ export const inputStore = new InputStore()
 
 
   // private notify(key: string | string[]) {
-  //   console.log("notifying input store", key)
   //   if (isArray(key)) return key.forEach(k => this.notify(k))
   //   this.listeners.get(key)?.forEach(l => l())
   // }
@@ -317,7 +305,6 @@ export const inputStore = new InputStore()
 
 
 // private getNestedValue(obj: any, path: string) {
-//   // console.log("getting input store path", path)
 //   return path.split('.').reduce((a, c) => a?.[c], obj)
 // }
 
@@ -354,7 +341,6 @@ export const inputStore = new InputStore()
 //   private listeners = new Set<Listener>()
 
 //   subscribe = (listener: Listener) => {
-//     console.log("subscribing to input store")
 //     this.listeners.add(listener)
 //     return () => this.listeners.delete(listener)
 //   }
@@ -364,12 +350,10 @@ export const inputStore = new InputStore()
 //   }
 
 //   getSnapshot = () => {
-//     console.log("getting input store snapshot")
 //     return this.state
 //   }
 
 //   initializeInputStore() {
-//     console.log("initializing input store")
 //     this.state.inputData = {}
 //   }
 

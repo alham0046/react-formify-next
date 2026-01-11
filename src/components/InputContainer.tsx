@@ -27,7 +27,6 @@ const InputContainer: FC<InputContainerProps> = ({ children, inputContainerStyle
   const initialRender = useRef(true)
 
   if (initialRender.current) {
-    console.log('initializing input store')
     inputStore.initializeInputStore(mode)
     initialRender.current = false
   }
@@ -49,7 +48,6 @@ const InputContainer: FC<InputContainerProps> = ({ children, inputContainerStyle
         }
         current = current.parentElement;
       }
-      // console.log('the bg color is', backgroundColor)
       if (backgroundColor == 'rgba(0, 0, 0, 0)' || backgroundColor == '') inputStore.setBackgroundColor('white')
       else inputStore.setBackgroundColor(backgroundColor)
     }
@@ -119,7 +117,6 @@ export default memo(InputContainer)
 //         }
 //         current = current.parentElement;
 //       }
-//       // console.log('the bg color is', backgroundColor)
 //       if (backgroundColor == 'rgba(0, 0, 0, 0)' || backgroundColor == '') setBgColor('white')
 //       else setBgColor(backgroundColor)
 //       // setBgColor(backgroundColor ?? 'white')

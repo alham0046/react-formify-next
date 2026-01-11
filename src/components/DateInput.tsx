@@ -10,7 +10,7 @@ import { handleInitialValue } from '../Utils/setInitialValue';
 import { inputStore } from 'src/store/InputStore';
 
 interface DateProps extends InputProps {
-    onDateSelect?: (date: string) => {}
+    onDateSelect?: (date: string) => void
     defaultTodayDate?: boolean
     defaultDate?: string
 }

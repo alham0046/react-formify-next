@@ -13,11 +13,11 @@ interface FullInputProps$1 {
     disabled?: string | boolean;
     hideElement?: string | boolean;
     onEnterPress?: (args: {
-        currentValue?: string;
+        currentValue?: string | number;
         allData?: Record<string, any>;
     }) => void;
     onBlur?: (args: {
-        currentValue?: string;
+        currentValue?: string | number;
         allData?: Record<string, any>;
     }) => void;
     name?: string;
@@ -132,7 +132,7 @@ type AutoInputProps = Omit<FullAutoInputProps, "sharedStyles" | "bgColor" | "onI
 declare const MemoizedAutoInput: React__default.NamedExoticComponent<AutoInputProps>;
 
 interface DateProps extends InputProps {
-    onDateSelect?: (date: string) => {};
+    onDateSelect?: (date: string) => void;
     defaultTodayDate?: boolean;
     defaultDate?: string;
 }

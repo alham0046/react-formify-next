@@ -9,8 +9,8 @@ export interface FullInputProps {
     privacy?: boolean
     disabled?: string | boolean
     hideElement?: string | boolean
-    onEnterPress?: (args: { currentValue?: string, allData?: Record<string, any> }) => void
-    onBlur?: (args: { currentValue?: string, allData?: Record<string, any> }) => void
+    onEnterPress?: (args: { currentValue?: string | number, allData?: Record<string, any> }) => void
+    onBlur?: (args: { currentValue?: string | number, allData?: Record<string, any> }) => void
     name?: string;
     onChange?: (value: string | number) => void
     onDisableChange?: (args: {

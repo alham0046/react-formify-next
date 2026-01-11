@@ -54,7 +54,6 @@ const SelectTemplate: React.FC<TemplateProps> = ({
 
     useLayoutEffect(() => {
         if (labelRef.current) {
-            // console.log('logging layout')
             setLabelWidth(labelRef.current.offsetWidth);
         }
     }, [hideElement]);
@@ -68,7 +67,6 @@ const SelectTemplate: React.FC<TemplateProps> = ({
 
     return (
         <div className={`relative w-full group ${styles.containerStyles}`}>
-            {/* {console.log('rendering select template')} */}
             <DropdownModal onSelect={handleSelect} options={options} name={name} styles={styles} onToggleDropdown={onToggleDropdown} seachable={seachable} disabled={disabled} modalContainerRef={fullProps.modalContainerRef} />
             {labelWidth && (
                 <div
@@ -179,7 +177,6 @@ export default memo(SelectTemplate);
 
 //     useLayoutEffect(() => {
 //         if (labelRef.current) {
-//             // console.log('logging layout')
 //             setLabelWidth(labelRef.current.offsetWidth);
 //         }
 //     }, [hideElement]);
@@ -187,7 +184,6 @@ export default memo(SelectTemplate);
 
 //     return (
 //         <div ref={containerRef} className={`relative w-full group ${containerStyles}`}>
-//             {/* {console.log('here is select input is')} */}
 //             <div
 //                 onClick={toggleDropdown}
 //                 className={`py-2 px-2 border-2 w-full h-12 flex justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${inputStyles}`}

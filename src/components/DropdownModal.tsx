@@ -70,7 +70,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
     }, []);
 
     const handleOptionClick = (selectedValue: string) => {
-        // console.log('inside handleoptionclick', name)
         // setValue(selectedValue);
         onSelect(selectedValue);
         setIsOpen(false);
@@ -78,18 +77,15 @@ const DropdownModal: FC<DropdownModalProps> = ({
 
     // 2. Stable click handler function for options
     const handleOptionSelect = (option: DropdownOption) => {
-        // console.log('inside handleoptionselect', name)
         handleOptionClick(option.value);
     }
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // console.log('inside handlsearchchange', name)
         setSearch(e.target.value)
         updateHighlight(0)
     }
     
     const filteredOptions = useMemo(() => {
-        // console.log('inside filteredoptions', name)
         if (!search) return options;
         const lowered = search.toLowerCase();
 
@@ -119,7 +115,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
     
     useLayoutEffect(() => {
         if (isOpen && modalRef.current) {
-            // console.log('inside layouteffect', name)
             calculatePosition();
             updateHighlight(0);
         }
@@ -147,8 +142,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
         
         
         const scrollOffset = modalContainer === document.documentElement ? window.scrollY : 0;
-        // console.log('calculted custom modal as', modalContainerRef?.current.getBoundingClientRect(), 'modal container height', modalContainer.clientHeight, 'space below is', spaceBelow, 'space above is', spaceAbove, 'calculated dropdown height as', dropdownRect, 'for options list height', inputRect, 'and direction is', direction);
-        // console.log('inside calculate postion', name)
         const top = direction === "down"
             ? inputRect.bottom + scrollOffset + styles.dropdownOffset!
             : inputRect.top - dropdownRect.height + scrollOffset - styles.dropdownOffset!
@@ -185,7 +178,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
         if (filteredOptions.length === 0) return; // <-- FIX
         const oldIndex = highlightIndexRef.current;
         if (oldIndex == newIndex) return
-        // console.log('inside update highlight', name)
         
         // Remove highlight from old element
         optionRefs.current[oldIndex]?.classList.remove("bg-blue-100");
@@ -201,7 +193,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (!isOpen) return;
 
-        console.log('inside handlekeydown', e.key)
         
         if (e.key === "ArrowDown") {
             e.preventDefault();
@@ -315,7 +306,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
             tabIndex={0} // Makes the div focusable for keyboard navigation
             className={`py-2 px-2 relative border-2 w-full h-12 flex justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${styles.inputStyles}`}
         >
-            {/* {console.log('rendering dropdown modal with options')} */}
             <span>{options.find((opt) => opt.value === value)?.label || 'Select an Option'}</span>
             <svg
                 className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
@@ -469,7 +459,6 @@ export default memo(DropdownModal, (prev, next) => shallowOrDeepEqual(prev.optio
 //         const optionsListHeight = !isEmptyArray(filteredOptions) ? filteredOptions.length * 40 : 40
 //         const dropdownHeight = Math.min(dropdownMaxHeight, optionsListHeight + (seachable ? 40 : 0)); // +40 for search bar height
 
-//         // console.log('calculated dropdown height as', dropdownHeight, 'for options list height', optionsListHeight);
 
 //         const spaceBelow = modalContainer.clientHeight - inputRect.bottom;
 //         const spaceAbove = inputRect.top - modalRect.top;
@@ -640,7 +629,6 @@ export default memo(DropdownModal, (prev, next) => shallowOrDeepEqual(prev.optio
 //             tabIndex={0} // Makes the div focusable for keyboard navigation
 //             className={`py-2 px-2 relative border-2 w-full h-12 flex justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${inputStyles}`}
 //         >
-//             {console.log('rendering dropdown modal with options', options, name)}
 //             <span>{options.find((opt) => opt.value === value)?.label || 'Select an Option'}</span>
 //             <svg
 //                 className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
@@ -726,7 +714,6 @@ export default memo(DropdownModal, (prev, next) => shallowOrDeepEqual(prev.optio
 //         };
 //     }, []);
 //     const handleOptionClick = (selectedValue: string) => {
-//         console.log('option clicked', selectedValue)
 //         setValue(selectedValue);
 //         onSelect(selectedValue);
 //         setIsOpen(false);
@@ -745,7 +732,6 @@ export default memo(DropdownModal, (prev, next) => shallowOrDeepEqual(prev.optio
 //             option.label.toLowerCase().includes(search.toLowerCase())
 //         );
 //     }, [search, options]);
-//     // useEffect(() => { console.log('the isopen value is', isOpen) }, [isOpen])
 //     const toggleDropdown = () => {
 //         if (disabled || isEmptyArray(options)) return
 //         onToggleDropdown && onToggleDropdown(isOpen);
@@ -848,7 +834,6 @@ export default memo(DropdownModal, (prev, next) => shallowOrDeepEqual(prev.optio
 //             tabIndex={0}
 //             className={`py-2 px-2 relative border-2 w-full h-12 flex justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${inputStyles}`}
 //         >
-//             {console.log('rendering dropdown modal with options', options, name)}
 //             <span>{options.find((opt) => opt.value === value)?.label || ''}</span>
 //             <svg
 //                 className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
@@ -1011,7 +996,6 @@ export default memo(DropdownModal, (prev, next) => shallowOrDeepEqual(prev.optio
 //             option.label.toLowerCase().includes(search.toLowerCase())
 //         );
 //     }, [search, options]);
-//     // useEffect(() => { console.log('the isopen value is', isOpen) }, [isOpen])
 //     const toggleDropdown = () => {
 //         if (disabled || isEmptyArray(options)) return
 //         onToggleDropdown && onToggleDropdown(isOpen);
@@ -1079,7 +1063,6 @@ export default memo(DropdownModal, (prev, next) => shallowOrDeepEqual(prev.optio
 //             tabIndex={0}
 //             className={`py-2 px-2 relative border-2 w-full h-12 flex justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${inputStyles}`}
 //         >
-//             {console.log('rendering dropdown modal with options')}
 //             <span>{options.find((opt) => opt.value === value)?.label || ''}</span>
 //             <svg
 //                 className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}

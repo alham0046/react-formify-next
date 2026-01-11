@@ -9,7 +9,6 @@ export function useComputedExpression(expr?: boolean | string, name?: string) : 
   const { deps, evaluate } = compileExpression(expr)
   // const { deps, evaluate } = useMemo(() => compileExpression(expr), [expr]);
 
-  // console.log('useComputedExpression', name, evaluate, deps)
 
   const result = useSyncExternalStore(
     (cb) => {
@@ -20,7 +19,6 @@ export function useComputedExpression(expr?: boolean | string, name?: string) : 
     },
     () => {
       const val = evaluate(inputStore.getSnapshot().inputData ?? {})
-      // console.log('useComputedExpression', name, val)
       return val
     }
   )
@@ -139,7 +137,6 @@ export function useComputedExpression(expr?: boolean | string, name?: string) : 
 //             }
 //             const currentValue = getNestedValue(inputData, currentInputKey);
 //             if (isLastComputedValid && !currentValue) {
-//                 // console.log('returning last computed value for missing key', propValue, isLastComputedValid, inputData[currentInputKey]);
 //                 return lastComputedRef.current;
 //             }
 //             // if (isLastComputedValid && !inputData[currentInputKey]) {
