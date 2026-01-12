@@ -14,6 +14,7 @@
     "build:css": "npx @tailwindcss/cli -i ./src/styles.css -o ./dist/styles.css --minify",
     "build": "npm run build:css && tsup",
     "dev": "tsup --watch",
+    "release": "node scripts/release.js",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
