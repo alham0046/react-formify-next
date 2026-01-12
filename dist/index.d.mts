@@ -215,8 +215,6 @@ interface InputContainerProps {
 }
 declare const _default: React__default.NamedExoticComponent<InputContainerProps>;
 
-declare function useInputStore(key: string): any;
-
 interface FieldProps {
     [key: string]: any;
 }
@@ -224,4 +222,6 @@ declare const setFieldValue: (FieldCredentials: FieldProps) => void;
 
 declare const setEditData: (data: Record<string, any>) => void;
 
-export { _default$1 as ArrayContainer, MemoizedAutoInput as AutoInput, type ConfirmationRenderProps, memoizedDateInput as DateInput, MemoizedDisabledInput as DisabledInput, _default as InputContainer, MemoizedNumInput as NumInput, MemoizedObjectContainer as ObjectContainer, MemoizedSelectInput as SelectInput, MemoizedStrInput as StrInput, MemoizedSubmitButton as SubmitButton, type SubmitButtonRef, type SubmitHandler, setEditData, setFieldValue, useInputStore };
+declare const ResetForm: (resetData?: Record<string, any>) => (key?: string | string[]) => void;
+
+export { _default$1 as ArrayContainer, MemoizedAutoInput as AutoInput, type ConfirmationRenderProps, memoizedDateInput as DateInput, MemoizedDisabledInput as DisabledInput, _default as InputContainer, MemoizedNumInput as NumInput, MemoizedObjectContainer as ObjectContainer, ResetForm, MemoizedSelectInput as SelectInput, MemoizedStrInput as StrInput, MemoizedSubmitButton as SubmitButton, type SubmitButtonRef, type SubmitHandler, setEditData, setFieldValue };
