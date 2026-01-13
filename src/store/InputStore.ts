@@ -123,6 +123,8 @@ class InputStore {
       ) {
         this.collectKeys(value, path, paths)
       } else if (isArray(value)) {
+        this.arrayItems.set(path, [...value])
+        this.notify(path)
         for (let i = 0; i < value.length; i++) {
           this.collectKeys(value[i], `${path}.${i}`, paths)
         }
@@ -137,9 +139,13 @@ class InputStore {
     }
   }
 
-  setFieldInitialData (key: string, value: any) {
+  setFieldInitialData (key: string, value: any, isDisabledInput?: boolean) {
     this.setNestedValue(this.state.inputData, key, value)
-    this.setNestedValue(this.rawData, key, "")
+    if (isDisabledInput) {
+      this.setNestedValue(this.rawData, key, value)
+    } else {
+      this.setNestedValue(this.rawData, key, "")
+    }
     if (this.isEditMode) {
       this.setNestedValue(this.state.initialData, key, value)
     }
@@ -242,7 +248,7 @@ class InputStore {
     return this.getNestedValue(this.state.inputData, path)
   }
 
-  private arrayItems = new Map<string, any[]>()   ////// path -> array items
+  private arrayItems = new Map<string, any[]>()   ////// arraycontainer and items. it has nothing to do with inputs inside arraycontainer. which means it stores supposedly playLink -> [data1, data2, data3] just to map and do not store playLink.0 or playLink.0.host
 
   getArrayItems(path: string) {
     const arr = this.arrayItems.get(path)
@@ -270,6 +276,32 @@ class InputStore {
 
     this.notify(path)
   }
+  
+  //// this is to solve the problem of inputs inside arraycontainer which can change with setEditData. like if setEditData increases arrayItems from backend it will show replace and show the updated data in ui
+  private hydrateArrays(obj: any, prefix = '') {
+  for (const key in obj) {
+    const value = obj[key]
+    const path = prefix ? `${prefix}.${key}` : key
+
+    if (Array.isArray(value)) {
+      // 🔥 THIS IS THE KEY LINE
+      this.arrayItems.set(path, [...value])
+      this.notify(path)
+
+      // recurse into array objects
+      value.forEach((item, index) => {
+        if (typeof item === 'object' && item !== null) {
+          this.hydrateArrays(item, `${path}.${index}`)
+        }
+      })
+    }
+
+    else if (typeof value === 'object' && value !== null) {
+      this.hydrateArrays(value, path)
+    }
+  }
+}
+
 }
 
 export const inputStore = new InputStore()

@@ -1,10 +1,7 @@
 import { inputStore } from "src/store/InputStore";
 
-export const handleInitialValue = (name: string, initialValue: string, compName?: string) => {
-    const storedData = inputStore.getSnapshot().inputData;
-    if (!storedData) {
-        return;
-    }
-    const value = storedData[name] || initialValue
-    inputStore.setFieldInitialData(name, value)
+export const handleInitialValue = (path: string, initialValue: string, compName?: string) => {
+    const existingValue = inputStore.getInputNestedValue(path)
+    const value = existingValue || initialValue
+    inputStore.setFieldInitialData(path, value)
 }

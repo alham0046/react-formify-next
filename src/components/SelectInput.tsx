@@ -6,6 +6,7 @@ import { setFieldValue } from '../Utils/SetFieldValue';
 import { useFieldName } from '../hooks/useFieldName';
 import { useSelectOptions, type OptionMap } from '../hooks/useSelectOptions';
 import { inputStore } from 'src/store/InputStore';
+import { handleInitialValue } from 'src/Utils/setInitialValue';
 
 interface SelectOption {
     label: string;
@@ -78,6 +79,10 @@ const SelectInput: FC<SelectProps> = ({
     const handleOnDisableChange = useCallback((value: any) => {
         setFieldValue({ [modifiedName]: value })
     }, [modifiedName])
+
+    useEffect(() => {
+        handleInitialValue(modifiedName, initialValue)
+    }, [])
 
     const disabledValue: boolean = useComputedExpression(disabled)
 
