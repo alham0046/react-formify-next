@@ -75,7 +75,7 @@ const InputTemplate = forwardRef<InputRefProps, TemplateProps>(({
     }))
 
     const handleBlur = () => {
-        const data = inputStore.getSnapshot()
+        const data = inputStore.getSnapshot().inputData
         onBlur?.({ currentValue: value ?? "", allData: data as Record<string, any> })
     }
     const handleFocus = () => {
