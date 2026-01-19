@@ -12,7 +12,7 @@ class InputStore {
   }
 
   // refData = null as Record<string, any> | null
-  sharedContext = new Map<string, any>()     /////// this will be used to share data between inputs which do not involve in inputData(for side effects)
+  // sharedContext = new Map<string, any>()     /////// this will be used to share data between inputs which do not involve in inputData(for side effects)
 
 
   private isBatching = false
@@ -202,7 +202,7 @@ class InputStore {
         editedKeys: new Set()
       }
       this.currentValue = ""
-      this.sharedContext.clear()
+      // this.sharedContext.clear()
       this.arrayItems.clear()
       this.notifyAll()
     }
@@ -215,7 +215,7 @@ class InputStore {
       editedKeys: new Set()
     }
     this.currentValue = ""
-    this.sharedContext.clear()
+    // this.sharedContext.clear()
     this.arrayItems.clear()
   }
 
