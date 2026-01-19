@@ -52,7 +52,7 @@ const InputContainer: FC<InputContainerProps> = ({ children, inputContainerStyle
       else inputStore.setBackgroundColor(backgroundColor)
     }
     return () => {
-      inputStore.clear()
+      inputStore.reset()()
     }
   }, []);
 
