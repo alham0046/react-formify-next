@@ -11,6 +11,10 @@ class InputStore {
     editedKeys: new Set<string>()
   }
 
+  // refData = null as Record<string, any> | null
+  sharedContext = new Map<string, any>()     /////// this will be used to share data between inputs which do not involve in inputData(for side effects)
+
+
   private isBatching = false
   private pendingKeys = new Set<string>()
 
@@ -198,9 +202,21 @@ class InputStore {
         editedKeys: new Set()
       }
       this.currentValue = ""
+      this.sharedContext.clear()
       this.arrayItems.clear()
       this.notifyAll()
     }
+  }
+
+  clear() {
+    this.state = {
+      inputData: null,
+      initialData: null,
+      editedKeys: new Set()
+    }
+    this.currentValue = ""
+    this.sharedContext.clear()
+    this.arrayItems.clear()
   }
 
   private setNestedValue(obj: any, path: string, value: any) {
