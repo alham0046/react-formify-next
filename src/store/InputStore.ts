@@ -193,13 +193,13 @@ class InputStore {
       }
       const data = structuredClone(nextData ?? this.rawData ?? {})
       this.state = {
-      inputData: data,
-      initialData: this.isEditMode ? structuredClone(data) : null,
-      editedKeys: new Set()
-    }
-    this.currentValue = ""
-    this.arrayItems.clear()
-    this.notifyAll()
+        inputData: data,
+        initialData: this.isEditMode ? structuredClone(data) : null,
+        editedKeys: new Set()
+      }
+      this.currentValue = ""
+      this.arrayItems.clear()
+      this.notifyAll()
     }
   }
 

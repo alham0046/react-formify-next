@@ -54,6 +54,7 @@ interface ArrayHelpers {
     add: (item: any) => void;
     remove: (index: number) => void;
     isLast: (index: number) => boolean;
+    arrayLength: number;
 }
 interface ArrayContainerProps {
     name: string;

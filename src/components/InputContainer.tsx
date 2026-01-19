@@ -51,6 +51,9 @@ const InputContainer: FC<InputContainerProps> = ({ children, inputContainerStyle
       if (backgroundColor == 'rgba(0, 0, 0, 0)' || backgroundColor == '') inputStore.setBackgroundColor('white')
       else inputStore.setBackgroundColor(backgroundColor)
     }
+    return () => {
+      inputStore.reset()
+    }
   }, []);
 
   return (

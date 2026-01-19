@@ -7,6 +7,7 @@ interface ArrayHelpers {
   add: (item : any) => void
   remove: (index: number) => void
   isLast: (index: number) => boolean
+  arrayLength: number
 }
 
 interface ArrayContainerProps {
@@ -34,7 +35,8 @@ const ArrayContainer: FC<ArrayContainerProps> = ({ name, items, getKey, children
     const helpers: ArrayHelpers = {
         add: (addItem) => inputStore.addArrayItem(arrayScope, defaultAddItem || addItem),
         remove: (index) => inputStore.removeArrayItem(arrayScope, index),
-        isLast: (index) => index === dynamicItem.length - 1
+        isLast: (index) => index === dynamicItem.length - 1,
+        arrayLength: dynamicItem.length
     }
     return (
         <>
