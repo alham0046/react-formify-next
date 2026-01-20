@@ -19,14 +19,13 @@ interface FullTemplateProps {
     seachable: boolean;
     styles: StyleProp
     bgColor: string;
-    modalContainerRef : RefObject<HTMLDivElement>
     sharedStyles?: {
         placeholderStyles?: string;
         [key: string]: any;
     };
 }
 
-interface TemplateProps extends Omit<FullTemplateProps, 'sharedStyles' | 'bgColor' | 'modalContainerRef'> {
+interface TemplateProps extends Omit<FullTemplateProps, 'sharedStyles' | 'bgColor'> {
     makeEmptyDisabled?: boolean
 }
 
@@ -67,7 +66,7 @@ const SelectTemplate: React.FC<TemplateProps> = ({
 
     return (
         <div className={`relative w-full group ${styles.containerStyles}`}>
-            <DropdownModal onSelect={handleSelect} options={options} name={name} styles={styles} onToggleDropdown={onToggleDropdown} seachable={seachable} disabled={disabled} modalContainerRef={fullProps.modalContainerRef} />
+            <DropdownModal onSelect={handleSelect} options={options} name={name} styles={styles} onToggleDropdown={onToggleDropdown} seachable={seachable} disabled={disabled} />
             {labelWidth && (
                 <div
                     className="absolute top-0 left-4 peer-focus:opacity-100 transition-opacity duration-200"

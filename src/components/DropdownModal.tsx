@@ -5,6 +5,7 @@ import { type StyleProp } from "../typeDeclaration/stylesProps";
 // import { createPortal } from 'react-dom'
 import { shallowOrDeepEqual } from "../functions/shallowOrDeepEqual";
 import OptionItem from "./OptionItem";
+import { useContainerContext } from "src/context/ContainerContext";
 
 
 interface DropdownOption {
@@ -19,7 +20,7 @@ interface DropdownModalProps {
     styles: StyleProp
     name: string;
     onToggleDropdown?: (isOpen: boolean) => void;
-    modalContainerRef?: React.RefObject<HTMLDivElement>;
+    // modalContainerRef?: React.RefObject<HTMLDivElement>;
     // You should typically pass the current value in as a prop for a controlled component
     initialValue?: string;
 }
@@ -32,11 +33,12 @@ const DropdownModal: FC<DropdownModalProps> = ({
     seachable,
     name,
     styles,
-    modalContainerRef,
+    // modalContainerRef,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     // Use the initialValue prop for the controlled state
     // const [value, setValue] = useState<string>(initialValue);
+    const {modalContainerRef} = useContainerContext()
     const value: string = useInputStore(name)
     const [search, setSearch] = useState<string>('');
     const highlightIndexRef = useRef<number>(0);

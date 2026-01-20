@@ -1,5 +1,6 @@
 import React, { type FC, type ReactNode, type RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { memo } from 'react'
+import { ContainerContext } from 'src/context/ContainerContext';
 import { inputStore } from 'src/store/InputStore';
 
 interface InputContainerProps {
@@ -57,9 +58,11 @@ const InputContainer: FC<InputContainerProps> = ({ children, inputContainerStyle
   }, []);
 
   return (
-    <div ref={containerRef} className={inputContainerStyles}>
-      {children}
-    </div>
+    <ContainerContext.Provider value={{ sharedStyles, modalContainerRef }}>
+      <div ref={containerRef} className={inputContainerStyles}>
+        {children}
+      </div>
+    </ContainerContext.Provider>
   )
 }
 
