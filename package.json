@@ -1,6 +1,6 @@
 {
   "name": "react-formify-next",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Reusable Non-Zustand-based input kit for React forms.",
   "license": "ISC",
   "author": "Alham",
