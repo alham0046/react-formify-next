@@ -206,6 +206,17 @@ class InputStore {
     }
   }
 
+  clear() {
+    this.state = {
+      inputData: null,
+      initialData: null,
+      editedKeys: new Set()
+    }
+    this.currentValue = ""
+    this.arrayItems.clear()
+    this.sharedContext.clear()
+  }
+
   private setNestedValue(obj: any, path: string, value: any) {
     const keys = path.split('.')
     let curr = obj
