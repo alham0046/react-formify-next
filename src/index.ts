@@ -13,5 +13,5 @@ export { default as InputContainer } from './components/InputContainer';
 export { setFieldValue } from './Utils/SetFieldValue';
 // export { useResetForm } from './hooks/useResetForm'; // If you make this
 export { setEditData } from './Utils/SetEditData'
-export { ResetForm } from './Utils/resetForm'
+export { ResetForm, ClearForm } from './Utils/resetForm'
 export {SharedContext} from './Utils/sharedContextManager'
