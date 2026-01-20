@@ -14,3 +14,4 @@ export { setFieldValue } from './Utils/SetFieldValue';
 // export { useResetForm } from './hooks/useResetForm'; // If you make this
 export { setEditData } from './Utils/SetEditData'
 export { ResetForm } from './Utils/resetForm'
+export {SharedContext} from './Utils/sharedContextManager'

@@ -225,4 +225,12 @@ declare const setEditData: (data: Record<string, any>) => void;
 
 declare const ResetForm: (resetData?: Record<string, any>) => (key?: string | string[]) => void;
 
-export { _default$1 as ArrayContainer, MemoizedAutoInput as AutoInput, type ConfirmationRenderProps, memoizedDateInput as DateInput, MemoizedDisabledInput as DisabledInput, _default as InputContainer, MemoizedNumInput as NumInput, MemoizedObjectContainer as ObjectContainer, ResetForm, MemoizedSelectInput as SelectInput, MemoizedStrInput as StrInput, MemoizedSubmitButton as SubmitButton, type SubmitButtonRef, type SubmitHandler, setEditData, setFieldValue };
+declare const SharedContext: {
+    get: (key?: string) => any;
+    set: (key: string, value: any) => Map<string, any>;
+    addMany: (data: Record<string, any>) => void;
+    remove: (key: string) => boolean;
+    clear: () => void;
+};
+
+export { _default$1 as ArrayContainer, MemoizedAutoInput as AutoInput, type ConfirmationRenderProps, memoizedDateInput as DateInput, MemoizedDisabledInput as DisabledInput, _default as InputContainer, MemoizedNumInput as NumInput, MemoizedObjectContainer as ObjectContainer, ResetForm, MemoizedSelectInput as SelectInput, SharedContext, MemoizedStrInput as StrInput, MemoizedSubmitButton as SubmitButton, type SubmitButtonRef, type SubmitHandler, setEditData, setFieldValue };

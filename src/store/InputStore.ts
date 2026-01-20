@@ -11,6 +11,8 @@ class InputStore {
     editedKeys: new Set<string>()
   }
 
+  sharedContext = new Map<string, any>()
+
   private isBatching = false
   private pendingKeys = new Set<string>()
 
@@ -200,6 +202,7 @@ class InputStore {
       this.currentValue = ""
       this.arrayItems.clear()
       this.notifyAll()
+      this.sharedContext.clear()
     }
   }
 
