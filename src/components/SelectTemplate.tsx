@@ -1,6 +1,7 @@
 import React, { useRef, useState, useLayoutEffect, memo, useCallback, type RefObject } from 'react';
 import { type StyleProp } from '../typeDeclaration/stylesProps';
 import DropdownModal from './DropdownModal';
+import { inputStore } from 'src/store/InputStore';
 // import { useInputStore } from 'src/hooks/useInputStore';
 
 interface SelectOption {
@@ -18,14 +19,13 @@ interface FullTemplateProps {
     hideElement?: boolean;
     seachable: boolean;
     styles: StyleProp
-    bgColor: string;
     sharedStyles?: {
         placeholderStyles?: string;
         [key: string]: any;
     };
 }
 
-interface TemplateProps extends Omit<FullTemplateProps, 'sharedStyles' | 'bgColor'> {
+interface TemplateProps extends Omit<FullTemplateProps, 'sharedStyles'> {
     makeEmptyDisabled?: boolean
 }
 
@@ -45,6 +45,7 @@ const SelectTemplate: React.FC<TemplateProps> = ({
     ...props
 }) => {
     const fullProps = props as FullTemplateProps
+    const bgColor = inputStore.backgroundColor
     // const setFocusInputKey = useInputStore((state) => state.setCurrentInputKey);
     // const containerRef = useRef<HTMLDivElement>(null)
     const labelRef = useRef<any>(null);
@@ -73,7 +74,7 @@ const SelectTemplate: React.FC<TemplateProps> = ({
                     style={{
                         height: 2,
                         width: labelWidth * 0.75 + 8,
-                        backgroundColor: fullProps.bgColor || 'white',
+                        backgroundColor: bgColor || 'white',
                     }}
                 />
             )}

@@ -25,7 +25,7 @@ interface FullTemplateProps {
     }
 }
 
-type TemplateProps = Omit<FullTemplateProps, "sharedStyles" | "bgColor">
+type TemplateProps = Omit<FullTemplateProps, "sharedStyles">
 
 const InputTemplate = forwardRef<InputRefProps, TemplateProps>(({
     name,
