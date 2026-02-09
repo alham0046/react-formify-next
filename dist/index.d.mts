@@ -1,14 +1,34 @@
-import * as React from 'react';
+import * as React$1 from 'react';
 import React__default, { ReactNode, ReactElement, RefObject } from 'react';
+
+interface StyleProp {
+    inputStyles?: string;
+    placeholderStyles?: string;
+    containerStyles?: string;
+    modalBoxStyles?: string;
+    optionBoxStyles?: string;
+    optionStyles?: string;
+    dropdownOffset?: number;
+}
+interface InputStyle {
+    borderWidth: number | string;
+    boxHeight: number | string;
+    boxWidth: number | string;
+    placeHolderOffset: number | string;
+    inputInlineStyle?: Omit<React.CSSProperties, 'border' | 'borderWidth'>;
+    placeholderInlineStyle?: React.CSSProperties;
+}
 
 interface FullInputProps$1 {
     placeholder: string;
     containerStyles?: string;
     maxLength?: number;
+    children?: React.ReactNode;
     inputStyles?: string;
     placeholderStyles?: string;
     initialValue?: string;
     autoFocus?: boolean;
+    style?: Partial<InputStyle>;
     privacy?: boolean;
     disabled?: string | boolean;
     hideElement?: string | boolean;
@@ -42,8 +62,12 @@ interface InputRefProps {
     blur: () => void;
     reset: () => void;
 }
+type Year = `${number}${number}${number}${number}`;
+type Month = `0${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}` | `1${0 | 1 | 2}`;
+type Day = `0${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}` | `${1 | 2}${number}` | `3${0 | 1}`;
+type DateString = `${Year}-${Month}-${Day}`;
 
-declare const MemoizedStrInput: React.NamedExoticComponent<InputProps & React.RefAttributes<InputRefProps>>;
+declare const MemoizedStrInput: React$1.NamedExoticComponent<InputProps & React$1.RefAttributes<InputRefProps>>;
 
 interface NumInputProps extends InputProps {
     stringify?: boolean;
@@ -63,23 +87,13 @@ interface ArrayContainerProps {
     getKey?: (item: any, index: number) => string;
     children: (item: any, index: number, helpers: ArrayHelpers) => ReactNode;
 }
-declare const _default$1: React.NamedExoticComponent<ArrayContainerProps>;
+declare const _default$1: React$1.NamedExoticComponent<ArrayContainerProps>;
 
 interface ObjContainerProps {
     name: string;
     children: ReactNode;
 }
-declare const MemoizedObjectContainer: React.NamedExoticComponent<ObjContainerProps>;
-
-interface StyleProp {
-    inputStyles?: string;
-    placeholderStyles?: string;
-    containerStyles?: string;
-    modalBoxStyles?: string;
-    optionBoxStyles?: string;
-    optionStyles?: string;
-    dropdownOffset?: number;
-}
+declare const MemoizedObjectContainer: React$1.NamedExoticComponent<ObjContainerProps>;
 
 interface OptionMap {
     [key: string]: string[];
@@ -119,7 +133,7 @@ interface FullInputProps {
     };
 }
 type SelectProps = Omit<FullInputProps, "isArrayObject" | "arrayData" | "onInputChange">;
-declare const MemoizedSelectInput: React.NamedExoticComponent<SelectProps>;
+declare const MemoizedSelectInput: React$1.NamedExoticComponent<SelectProps>;
 
 interface FullAutoInputProps {
     initialData?: object;
@@ -135,27 +149,25 @@ declare const MemoizedAutoInput: React__default.NamedExoticComponent<AutoInputPr
 interface DateProps extends InputProps {
     onDateSelect?: (date: string) => void;
     defaultTodayDate?: boolean;
-    defaultDate?: string;
+    defaultDate?: DateString;
 }
 declare const memoizedDateInput: React__default.NamedExoticComponent<DateProps>;
 
 interface FullDisabledProps {
     initialValue?: string;
     containerStyles?: string;
+    children?: React.ReactNode;
     inputStyles?: string;
     placeholderStyles?: string;
     placeholder: string;
-    onChange?: (value: string | number, data: string | null) => void;
+    style?: Partial<InputStyle>;
+    privacy?: boolean;
+    hideElement?: string | boolean;
+    onChange?: (value: string | number) => void;
     name?: string;
-    isArrayObject?: boolean;
-    arrayData?: {
-        arrayName: string;
-        arrayIndex: number;
-    };
-    onInputChange: (name: string, value: string) => void;
 }
 type DisabledInputProps = Omit<FullDisabledProps, "isArrayObject" | "arrayData" | "onInputChange">;
-declare const MemoizedDisabledInput: React.NamedExoticComponent<DisabledInputProps>;
+declare const MemoizedDisabledInput: React$1.NamedExoticComponent<DisabledInputProps>;
 
 type SubmitData = {
     data: Record<string, any> | null;

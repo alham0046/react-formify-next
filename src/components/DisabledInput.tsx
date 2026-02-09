@@ -2,21 +2,22 @@ import  { type FC, memo, useEffect } from 'react';
 import InputTemplate from './InputTemplate';
 import { useFieldName } from '../hooks/useFieldName';
 import { handleInitialValue } from '../Utils/setInitialValue';
+import { useComputedExpression } from 'src/hooks/useComputedExpression';
+import { InputStyle } from 'src/typeDeclaration/stylesProps';
+import Input from './Input';
 
 interface FullDisabledProps {
     initialValue?: string;
     containerStyles?: string;
+    children?: React.ReactNode;
     inputStyles?: string;
     placeholderStyles?: string;
     placeholder: string;
-    onChange?: (value: string | number, data: string | null) => void
+    style?: Partial<InputStyle>
+    privacy?: boolean
+    hideElement?: string | boolean
+    onChange?: (value: string | number) => void
     name?: string;
-    isArrayObject?: boolean;
-    arrayData?: {
-        arrayName: string;
-        arrayIndex: number;
-    };
-    onInputChange: (name: string, value: string) => void;
 }
 
 type DisabledInputProps = Omit<FullDisabledProps, "isArrayObject" | "arrayData" | "onInputChange">;
@@ -24,12 +25,14 @@ type DisabledInputProps = Omit<FullDisabledProps, "isArrayObject" | "arrayData" 
 const DisabledInput: FC<DisabledInputProps> = ({
     initialValue = "",
     containerStyles = "",
+    privacy = false,
+    children,
+    style,
     placeholder,
-    onChange = () => { },
-    inputStyles,
+    hideElement = false,
     placeholderStyles,
     name,
-    ...props
+    ...rest
 }) => {
     const modifiedName = useFieldName(placeholder, name)
 
@@ -37,27 +40,34 @@ const DisabledInput: FC<DisabledInputProps> = ({
         handleInitialValue(modifiedName, initialValue)
     }, [])
 
-    // const value = useInputStore(modifiedName)
+    const hiddenValue: boolean = useComputedExpression(hideElement)
 
-    useEffect(() => {
-        onChange(initialValue, null)
-        // inputStore.setValue(modifiedName, initialValue);
-    }, [modifiedName]);
+    if (hiddenValue) {
+        return null;
+    }
+
 
     return (
-        <>
+        <div className={`relative ${containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
+            {/* {console.log('rendering StrInput', modifiedName)} */}
             <InputTemplate
-                name={name!}
-                value={initialValue}
+                name={modifiedName}
                 placeholder={placeholder}
-                disabled={true}
-                type='text'
-                containerStyles={containerStyles}
-                inputStyles={`bg-gray-300 ${inputStyles}`}
+                style={style}
                 placeholderStyles={placeholderStyles}
-                {...props}
-            />
-        </>
+            >
+                <Input
+                    name={modifiedName}
+                    placeholder={placeholder}
+                    inputInlineStyle={style?.inputInlineStyle}
+                    disabled={true}
+                    type={privacy ? 'password' : 'text'}
+                    fixedValue={initialValue}
+                    {...rest}
+                />
+            </InputTemplate>
+            {children}
+        </div>
     );
 };
 
@@ -68,6 +78,94 @@ const MemoizedDisabledInput = memo(DisabledInput)
 MemoizedDisabledInput.displayName = 'DisabledInput';
 
 export default MemoizedDisabledInput;
+
+
+
+
+
+
+
+
+// import  { type FC, memo, useEffect } from 'react';
+// import InputTemplate from './InputTemplate';
+// import { useFieldName } from '../hooks/useFieldName';
+// import { handleInitialValue } from '../Utils/setInitialValue';
+
+// interface FullDisabledProps {
+//     initialValue?: string;
+//     containerStyles?: string;
+//     inputStyles?: string;
+//     placeholderStyles?: string;
+//     placeholder: string;
+//     onChange?: (value: string | number, data: string | null) => void
+//     name?: string;
+//     isArrayObject?: boolean;
+//     arrayData?: {
+//         arrayName: string;
+//         arrayIndex: number;
+//     };
+//     onInputChange: (name: string, value: string) => void;
+// }
+
+// type DisabledInputProps = Omit<FullDisabledProps, "isArrayObject" | "arrayData" | "onInputChange">;
+
+// const DisabledInput: FC<DisabledInputProps> = ({
+//     initialValue = "",
+//     containerStyles = "",
+//     placeholder,
+//     onChange = () => { },
+//     inputStyles,
+//     placeholderStyles,
+//     name,
+//     ...props
+// }) => {
+//     const modifiedName = useFieldName(placeholder, name)
+
+//     useEffect(() => {
+//         handleInitialValue(modifiedName, initialValue)
+//     }, [])
+
+//     // const value = useInputStore(modifiedName)
+
+//     useEffect(() => {
+//         onChange(initialValue, null)
+//         // inputStore.setValue(modifiedName, initialValue);
+//     }, [modifiedName]);
+
+//     return (
+//         <>
+//             <InputTemplate
+//                 name={name!}
+//                 value={initialValue}
+//                 placeholder={placeholder}
+//                 disabled={true}
+//                 type='text'
+//                 containerStyles={containerStyles}
+//                 inputStyles={`bg-gray-300 ${inputStyles}`}
+//                 placeholderStyles={placeholderStyles}
+//                 {...props}
+//             />
+//         </>
+//     );
+// };
+
+// // 1. Export the memoized component
+// const MemoizedDisabledInput = memo(DisabledInput)
+
+// // 2. Set the displayName on the exported component
+// MemoizedDisabledInput.displayName = 'DisabledInput';
+
+// export default MemoizedDisabledInput;
+
+
+
+
+
+
+
+
+
+
 
 // export default memo(DisabledInput);
 {/* <input

@@ -6,49 +6,20 @@ import InputTemplate from "./InputTemplate";
 import { handleInitialValue } from "../Utils/setInitialValue";
 import { useFieldName } from "../hooks/useFieldName";
 import { inputStore } from "src/store/InputStore";
+import Input from "./Input";
 
 
-const StrInput = forwardRef<InputRefProps, InputProps>(({
-    placeholder,
-    containerStyles = "",
-    onEnterPress,
-    onBlur,
-    onDisableChange,
-    maxLength,
-    autoFocus = false,
-    privacy = false,
-    disabled = false,
-    hideElement = false,
-    inputStyles,
-    placeholderStyles,
-    onChange,
-    initialValue = "",
-    name,
-    ...props
-}, ref) => {
-    // const scope = useNameScope();
-
-    // const localName = name || camelCase(placeholder);
-    // const modifiedName = scope ? `${scope}.${localName}` : localName;
+const StrInput = forwardRef<InputRefProps, InputProps>(({...props}, ref) => {
+    const {placeholder, name,children,style,placeholderStyles, initialValue="", disabled=false, hideElement=false, containerStyles="", privacy=false, ...rest} = props
     const modifiedName = useFieldName(placeholder, name)
-
-    // const modifiedName = name || camelCase(placeholder);
 
     useEffect(() => {
         handleInitialValue(modifiedName, initialValue)
     }, [])
 
-    // const value = useInputStore(state => state.inputData[modifiedName] ?? "")
-    const value: string = useInputStore(modifiedName) ?? ""
-
     const disabledValue: boolean = useComputedExpression(disabled, modifiedName)
 
     const hiddenValue: boolean = useComputedExpression(hideElement)
-
-    useEffect(() => {
-        // inputStore.currentValue = value
-        onChange?.(value)  // Pass null as no event.data
-    }, [value])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         // const nativeEvent = e.nativeEvent as unknown as InputEvent; // Type assertion to InputEvent
@@ -56,27 +27,29 @@ const StrInput = forwardRef<InputRefProps, InputProps>(({
         inputStore.setValue(modifiedName, e.target.value)
     }
 
-
+    if (hiddenValue) return null
+    
     return (
-        <div style={{ display: hiddenValue ? 'none' : 'block' }}>
+        <div className={`relative ${containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
+            {/* {console.log('rendering StrInput', modifiedName)} */}
             <InputTemplate
-                ref={ref}
                 name={modifiedName}
-                value={value}
-                handleChange={handleChange}
-                onEnterPress={onEnterPress}
-                disabled={disabledValue}
-                // hideElement={hiddenValue}
-                onBlur={onBlur}
-                autoFocus={autoFocus}
-                maxLength={maxLength}
                 placeholder={placeholder}
-                type={privacy ? 'password' : 'text'}
-                containerStyles={containerStyles}
-                inputStyles={inputStyles}
+                style={style}
                 placeholderStyles={placeholderStyles}
-                {...props}
-            />
+            >
+                <Input
+                    ref={ref}
+                    name={modifiedName}
+                    placeholder={placeholder}
+                    inputInlineStyle={style?.inputInlineStyle}
+                    disabled={disabledValue}
+                    type={privacy ? 'password' : 'text'}
+                    handleChange={handleChange}
+                    {...rest}
+                />
+            </InputTemplate>
+            {children}
         </div>
     );
 });
@@ -88,6 +61,97 @@ const MemoizedStrInput = memo(StrInput)
 MemoizedStrInput.displayName = 'StrInput';
 
 export default MemoizedStrInput;
+
+
+
+
+
+// import { forwardRef, memo, useEffect } from "react";
+// import type { InputProps, InputRefProps } from "../typeDeclaration/inputProps";
+// import { useInputStore } from "../hooks/useInputStore";
+// import { useComputedExpression } from "../hooks/useComputedExpression";
+// import InputTemplate from "./InputTemplate";
+// import { handleInitialValue } from "../Utils/setInitialValue";
+// import { useFieldName } from "../hooks/useFieldName";
+// import { inputStore } from "src/store/InputStore";
+
+
+// const StrInput = forwardRef<InputRefProps, InputProps>(({
+//     placeholder,
+//     containerStyles = "",
+//     onEnterPress,
+//     onBlur,
+//     onDisableChange,
+//     maxLength,
+//     autoFocus = false,
+//     privacy = false,
+//     disabled = false,
+//     hideElement = false,
+//     inputStyles,
+//     placeholderStyles,
+//     onChange,
+//     initialValue = "",
+//     name,
+//     ...props
+// }, ref) => {
+//     const modifiedName = useFieldName(placeholder, name)
+
+//     // const modifiedName = name || camelCase(placeholder);
+
+//     useEffect(() => {
+//         handleInitialValue(modifiedName, initialValue)
+//     }, [])
+
+//     // const value = useInputStore(state => state.inputData[modifiedName] ?? "")
+//     const value: string = useInputStore(modifiedName) ?? ""
+
+//     const disabledValue: boolean = useComputedExpression(disabled, modifiedName)
+
+//     const hiddenValue: boolean = useComputedExpression(hideElement)
+
+//     useEffect(() => {
+//         // inputStore.currentValue = value
+//         onChange?.(value)  // Pass null as no event.data
+//     }, [value])
+
+//     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//         // const nativeEvent = e.nativeEvent as unknown as InputEvent; // Type assertion to InputEvent
+//         // onChange?.(changedValue, nativeEvent.data);
+//         inputStore.setValue(modifiedName, e.target.value)
+//     }
+
+
+//     return (
+//         <div style={{ display: hiddenValue ? 'none' : 'block' }}>
+//             <InputTemplate
+//                 ref={ref}
+//                 name={modifiedName}
+//                 value={value}
+//                 handleChange={handleChange}
+//                 onEnterPress={onEnterPress}
+//                 disabled={disabledValue}
+//                 // hideElement={hiddenValue}
+//                 onBlur={onBlur}
+//                 autoFocus={autoFocus}
+//                 maxLength={maxLength}
+//                 placeholder={placeholder}
+//                 type={privacy ? 'password' : 'text'}
+//                 containerStyles={containerStyles}
+//                 inputStyles={inputStyles}
+//                 placeholderStyles={placeholderStyles}
+//                 {...props}
+//             />
+//         </div>
+//     );
+// });
+
+// // 1. Export the memoized component
+// const MemoizedStrInput = memo(StrInput)
+
+// // 2. Set the displayName on the exported component
+// MemoizedStrInput.displayName = 'StrInput';
+
+// export default MemoizedStrInput;
 
 
 
