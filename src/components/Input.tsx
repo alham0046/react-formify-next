@@ -70,7 +70,7 @@ const Input = forwardRef<InputRefProps, InputProps>(({
     const handleBlur = () => {
         // console.log('blurred')
         inputStylesStore.disable(name, FieldVisualState.Focus)
-        const data = inputStore.getSnapshot()
+        const data = inputStore.getSnapshot().inputData
         onBlur?.({ currentValue: value ?? "", allData: data as Record<string, any> })
     }
     const handleFocus = () => {
@@ -82,7 +82,7 @@ const Input = forwardRef<InputRefProps, InputProps>(({
     const handleKeyPresses = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
             console.log('enter pressed')
-            const data = inputStore.getSnapshot()
+            const data = inputStore.getSnapshot().inputData
             onEnterPress?.({ currentValue: value ?? "", allData: data as Record<string, any> })
         }
     }
