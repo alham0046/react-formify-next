@@ -55,6 +55,7 @@ const DateInput: FC<DateProps> = forwardRef<InputRefProps, DateProps>(({
                 name={modifiedName}
                 placeholder={placeholder}
                 style={style}
+                childType='input'
                 placeholderStyles={placeholderStyles}
             >
                 <Input

@@ -54,6 +54,7 @@ const DisabledInput: FC<DisabledInputProps> = ({
                 name={modifiedName}
                 placeholder={placeholder}
                 style={style}
+                childType='input'
                 placeholderStyles={placeholderStyles}
             >
                 <Input

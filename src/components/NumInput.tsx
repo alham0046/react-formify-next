@@ -67,6 +67,7 @@ const NumInput = forwardRef<InputRefProps, NumInputProps>(({...props}, ref) => {
                 name={modifiedName}
                 placeholder={placeholder}
                 style={style}
+                childType='input'
                 placeholderStyles={placeholderStyles}
             >
                 <Input

@@ -12,6 +12,7 @@ interface InputProps {
     onChange?: (value: string | number) => void
     onEnterPress?: (args: { currentValue?: string | number, allData?: Record<string, any> }) => void
     fixedValue?: string
+    refRequired?: boolean
     maxLength?: number
     autoFocus?: boolean
     inputStyles?: string
@@ -29,6 +30,7 @@ const Input = forwardRef<InputRefProps, InputProps>(({
     fixedValue,
     maxLength,
     autoFocus=false,
+    refRequired=false,
     onBlur,
     onFocus,
     inputStyles="",
@@ -53,6 +55,12 @@ const Input = forwardRef<InputRefProps, InputProps>(({
         // inputStore.setValue(name, e.target.value)
         handleChange?.(e)
     }
+
+    useLayoutEffect(() => {
+        if (refRequired && inputRef.current) {
+            inputStore.setDropdownContext(`ref_${name}`, inputRef)
+        }
+    }, [inputRef])
 
     useImperativeHandle(ref, () => ({
         focus: () => {

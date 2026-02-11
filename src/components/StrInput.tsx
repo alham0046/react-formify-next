@@ -36,6 +36,7 @@ const StrInput = forwardRef<InputRefProps, InputProps>(({...props}, ref) => {
                 name={modifiedName}
                 placeholder={placeholder}
                 style={style}
+                childType="input"
                 placeholderStyles={placeholderStyles}
             >
                 <Input

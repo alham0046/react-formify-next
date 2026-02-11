@@ -1,11 +1,9 @@
-import { type FC, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { isEmptyArray } from "../functions/dataTypesValidation";
+import { type FC, memo, useCallback, useEffect, useRef, useState } from "react";
 import { useInputStore } from "../hooks/useInputStore";
-import { type StyleProp } from "../typeDeclaration/stylesProps";
-// import { createPortal } from 'react-dom'
+import { DropdownStyleProp, InputStyle } from "../typeDeclaration/stylesProps";
 import { shallowOrDeepEqual } from "../functions/shallowOrDeepEqual";
-import OptionItem from "./OptionItem";
-import { useContainerContext } from "src/context/ContainerContext";
+import RotatingDropdown, { RotatingDropdownRef } from "src/Icons/RotatingDropdown";
+import BaseDropdown from "./BaseDropdown";
 
 
 interface DropdownOption {
@@ -16,11 +14,13 @@ interface DropdownModalProps {
     options: DropdownOption[];
     onSelect: (value: string) => void;
     disabled: boolean;
-    seachable: boolean;
-    styles: StyleProp
+    searchable: boolean;
+    // style: StyleProp
+    style: Partial<InputStyle> & Pick<DropdownStyleProp, 'dropdownOffset'>
+    twStyle: Omit<DropdownStyleProp, 'dropdownOffset'>
     name: string;
     onToggleDropdown?: (isOpen: boolean) => void;
-    // modalContainerRef?: React.RefObject<HTMLDivElement>;
+    modalContainerRef?: React.RefObject<HTMLDivElement>;
     // You should typically pass the current value in as a prop for a controlled component
     initialValue?: string;
 }
@@ -30,35 +30,24 @@ const DropdownModal: FC<DropdownModalProps> = ({
     onSelect,
     onToggleDropdown,
     disabled,
-    seachable,
+    searchable,
     name,
-    styles,
+    style,
+    twStyle,
     // modalContainerRef,
 }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    // Use the initialValue prop for the controlled state
-    // const [value, setValue] = useState<string>(initialValue);
-    const {modalContainerRef} = useContainerContext()
     const value: string = useInputStore(name)
-    const [search, setSearch] = useState<string>('');
-    const highlightIndexRef = useRef<number>(0);
-    const optionRefs = useRef<HTMLDivElement[]>([]);
-    const [position, setPosition] = useState<{
-        top: number;
-        left: number;
-        width: number;
-        direction: "up" | "down";
-    } | null>(null);
+    const rotateRef = useRef<RotatingDropdownRef>(null)
+    const [isOpen, setIsOpen] = useState(false);
+    const [label, setLabel] = useState(value ||'Select an Option');
+    console.log('inside dropdownmodal', style)
+    const {inputInlineStyle, dropdownOffset} = style
+    const {optionStyles="", modalBoxStyles="", inputStyles=""} = twStyle
+    
     const inputRef = useRef<HTMLDivElement>(null);
-    const modalRef = useRef<HTMLDivElement>(null)
-    const searchRef = useRef<HTMLInputElement>(null);
-
-    // Sync external value changes if needed (useful if initialValue can change)
-    // useEffect(() => {
-    //     setValue(initialValue);
-    // }, [initialValue]);
 
     useEffect(() => {
+        if (!isOpen) return
         const handleClickOutside = (event: MouseEvent) => {
             if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
                 // setIsOpen(false);
@@ -69,266 +58,436 @@ const DropdownModal: FC<DropdownModalProps> = ({
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, [isOpen]);
 
-    const handleOptionClick = (selectedValue: string) => {
-        // setValue(selectedValue);
+    const handleOptionSelect = useCallback((option: DropdownOption) => {
+        const selectedValue = option.value;
+        console.log('selected value', selectedValue)
+        closeDropdown();
+        setLabel(selectedValue)
         onSelect(selectedValue);
-        setIsOpen(false);
-    }
+    }, [onSelect]);
 
-    // 2. Stable click handler function for options
-    const handleOptionSelect = (option: DropdownOption) => {
-        handleOptionClick(option.value);
-    }
-
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.target.value)
-        updateHighlight(0)
-    }
-    
-    const filteredOptions = useMemo(() => {
-        if (!search) return options;
-        const lowered = search.toLowerCase();
-
-        return options.filter((opt) => {
-            const label = opt.label.toLowerCase();
-            return label.indexOf(lowered) !== -1;
-        });
-        /////// ChatGPT says indexOf() is 30–40% faster than includes() and does not allocate regex objects.
-        // return options.filter(option =>
-        //     option.label.toLowerCase().includes(search.toLowerCase())
-        // );
-    }, [search, options]);
-
-    const optionRefsCallback = useCallback((el: HTMLDivElement | null) => {
-        if (!el) return;
-
-        // Get index from dataset
-        const label = el.dataset.label;
-        if (!label) return;
-
-        // Find index ONCE
-        const idx = filteredOptions.findIndex(o => o.label === label);
-        if (idx !== -1) {
-            optionRefs.current[idx] = el;
-        }
-    }, [filteredOptions]);
-    
-    useLayoutEffect(() => {
-        if (isOpen && modalRef.current) {
-            calculatePosition();
-            updateHighlight(0);
-        }
-    }, [filteredOptions.length, isOpen]);
-
-
-
-    const calculatePosition = () => {
-        const inputRect = inputRef.current?.getBoundingClientRect();
-        // Use document.documentElement.clientHeight for viewport height fallback
-        const modalContainer = modalContainerRef?.current || document.documentElement;
-        const modalRect = modalContainer.getBoundingClientRect();
-        const dropdownRect = modalRef.current?.getBoundingClientRect()
-
-        if (!inputRect || !dropdownRect) return;
-
-        
-        const spaceBelow = modalRect.bottom - inputRect.bottom;
-        const spaceAbove = inputRect.top - modalRect.top;
-        
-        const direction =
-        spaceBelow < spaceAbove
-        ? "up"
-        : "down";
-        
-        
-        const scrollOffset = modalContainer === document.documentElement ? window.scrollY : 0;
-        const top = direction === "down"
-            ? inputRect.bottom + scrollOffset + styles.dropdownOffset!
-            : inputRect.top - dropdownRect.height + scrollOffset - styles.dropdownOffset!
-
-        setPosition({
-            left: inputRect.left,
-            width: inputRect.width,
-            top,
-            direction,
-        });
-    };
-
-    const openDropdown = () => {
+    const openDropdown = useCallback(() => {
+      if (isOpen) return
       if (disabled) return
+      rotateRef.current?.open()
       setIsOpen(true)
-      highlightIndexRef.current = 0;
-      setSearch('');
-      setTimeout(() => {
-          searchRef.current?.focus()
-          updateHighlight(0);
-      }, 10);
-    }
+    }, [isOpen, disabled])
     
-    const closeDropdown = () => {
+    const closeDropdown = useCallback(() => {
+        rotateRef.current?.close()
       setIsOpen(false)
-    }
-
-    useEffect(() => {
-        onToggleDropdown?.(isOpen);
     }, [isOpen])
 
-    /** update highlight without rerender */
-    const updateHighlight = (newIndex: number) => {
-        if (filteredOptions.length === 0) return; // <-- FIX
-        const oldIndex = highlightIndexRef.current;
-        if (oldIndex == newIndex) return
-        
-        // Remove highlight from old element
-        optionRefs.current[oldIndex]?.classList.remove("bg-blue-100");
-        // Add highlight to new element
-        optionRefs.current[newIndex]?.classList.add("bg-blue-100");
-        // Scroll the element into view
-        optionRefs.current[newIndex]?.scrollIntoView({ block: "nearest" });
-        
-        highlightIndexRef.current = newIndex;
-    };
-
-    // keyboard navigation
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (!isOpen) return;
-
-        
-        if (e.key === "ArrowDown") {
-            e.preventDefault();
-            const next = Math.min(
-                highlightIndexRef.current + 1,
-                filteredOptions.length - 1
-            );
-            updateHighlight(next);
-        }
-
-        if (e.key === "ArrowUp") {
-            e.preventDefault();
-            const prev = Math.max(highlightIndexRef.current - 1, 0);
-            updateHighlight(prev);
-        }
-
-        if (e.key === "Enter") {
-            e.preventDefault();
-            const chosen = filteredOptions[highlightIndexRef.current];
-            if (chosen) {
-                handleOptionClick(chosen.value);
-            }
-        }
-
-        if (e.key === "Escape") {
-            // setIsOpen(false);
-            closeDropdown();
-            // inputRef.current?.focus(); // Return focus to the main input
-        }
-    };
-
-    // const handleSelectOption = useCallback((opt : string) => {
-    //     onSelect(opt);
-    // }, [onSelect]);
-
-
-    // JSX for the dropdown panel, placed in a separate variable for portal usage
-    const dropdownPanel = isOpen ? (
-        <div
-            className={`fixed z-10 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-hidden ${styles.modalBoxStyles}`}
-            style={{
-                top: position?.top,
-                left: position?.left,
-                width: position?.width,
-            }}
-            ref={modalRef}
-            // Prevent outside click handler from firing when clicking the panel itself
-            // onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-        >
-            {/* 🔍 Search box */}
-            {
-                seachable && (
-                    <div className="p-2 border-b border-gray-200">
-                        <input
-                            ref={searchRef}
-                            type="text"
-                            placeholder="Search..."
-                            className="w-full px-3 py-1 border rounded-lg bg-gray-50 outline-none"
-                            value={search}
-                            onChange={handleSearchChange}
-                            // Keep search input focused for typing
-                            onClick={(e) => e.stopPropagation()}
-                            onMouseDown={(e) => e.stopPropagation()}
-                            onKeyDown={(e) => {
-                                e.stopPropagation();
-                                handleKeyDown(e);
-                            }} // Listen for keyboard navigation here too
-                        />
-                    </div>
-                )
-            }
-            <div className="max-h-48 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                {/* No Options Found */}
-                {
-                    isEmptyArray(filteredOptions) ? (
-                        <div className={`py-2 px-4 text-gray-500 ${styles.optionStyles}`}>
-                            No options found.
-                        </div>
-                    ) : (
-                        filteredOptions.map((option, index) => (
-                            <OptionItem
-                            key={option.value}
-                            label={option.label}
-                            isSelected={value === option.value}
-                            isHighlighted = {highlightIndexRef.current === index}
-                            name={name!}
-                            optionClass={styles.optionStyles!}
-                            onSelect={() => handleOptionSelect(option)}
-                            ref={optionRefsCallback}
-                            // ref={(el) => {
-                            //     if (el) optionRefs.current[index] = el;
-                            // }}
-                        />
-                        ))
-                    )
-                }
-            </div>
-        </div>
-    ) : null;
-
-    // Determine the portal target (document.body is the safest default)
-    const portalTarget = document.body;
+    useEffect(() => {
+        // console.log('dropdown state changed', isOpen)
+        onToggleDropdown?.(isOpen);
+    }, [isOpen])
 
     return (
         <div
             ref={inputRef}
             onClick={openDropdown}
-            onKeyDown={handleKeyDown}
+            // onKeyDown={handleKeyDown}
             onFocus={openDropdown}
             tabIndex={0} // Makes the div focusable for keyboard navigation
-            className={`py-2 px-2 relative border-2 w-full h-12 flex justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${styles.inputStyles}`}
+            style={inputInlineStyle}
+            className={`relative w-full flex input-border justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${inputStyles}`}
         >
-            <span>{options.find((opt) => opt.value === value)?.label || 'Select an Option'}</span>
-            <svg
-                className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-
-            {/* 1. Use createPortal to render the dropdown outside the component's DOM */}
-            {isOpen && portalTarget && dropdownPanel}
-            {/* {isOpen && portalTarget && createPortal(dropdownPanel, portalTarget)} */}
+            {/* {console.log('rendering dropdown modal with options', isOpen)} */}
+            <span>{label}</span>
+            <RotatingDropdown ref={rotateRef} />
+            {isOpen && (
+                <BaseDropdown
+                    open={isOpen}
+                    options={options}
+                    close={closeDropdown}
+                    onSelect={(opt) => {
+                      handleOptionSelect(opt as DropdownOption)
+                    }}
+                    // position={position}
+                    inputRef={inputRef}
+                    dropdownOffset={dropdownOffset}
+                    searchable={searchable}
+                    // onSearchChange={(v) => {
+                    //   setSearch(v)
+                    // }}
+                    renderItem={(opt, index, highlighted, ref) => {
+                        const option = opt as DropdownOption
+                        return (
+                        <div
+                          key={option.value}
+                          ref={ref}
+                          className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-100 ${
+                            highlighted ? "bg-gray-100" : ""
+                          }`}
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            handleOptionSelect(option)
+                        }}
+                        >
+                          {option.label}
+                        </div>
+                    )
+                }}
+                />
+            )}
+            {/* {isOpen && dropdownPanel} */}
         </div>
     )
 }
 
 export default memo(DropdownModal, (prev, next) => shallowOrDeepEqual(prev.options, next.options))
-// export default memo(DropdownModal)
-// export default memo(DropdownModal, (prev, next) => isEqual(prev.options, next.options))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { type FC, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+// import { isEmptyArray } from "../functions/dataTypesValidation";
+// import { useInputStore } from "../hooks/useInputStore";
+// import { type StyleProp } from "../typeDeclaration/stylesProps";
+// // import { createPortal } from 'react-dom'
+// import { shallowOrDeepEqual } from "../functions/shallowOrDeepEqual";
+// import OptionItem from "./OptionItem";
+// import { useContainerContext } from "src/context/ContainerContext";
+
+
+// interface DropdownOption {
+//     label: string;
+//     value: string;
+// }
+// interface DropdownModalProps {
+//     options: DropdownOption[];
+//     onSelect: (value: string) => void;
+//     disabled: boolean;
+//     seachable: boolean;
+//     styles: StyleProp
+//     name: string;
+//     onToggleDropdown?: (isOpen: boolean) => void;
+//     // modalContainerRef?: React.RefObject<HTMLDivElement>;
+//     // You should typically pass the current value in as a prop for a controlled component
+//     initialValue?: string;
+// }
+
+// const DropdownModal: FC<DropdownModalProps> = ({
+//     options,
+//     onSelect,
+//     onToggleDropdown,
+//     disabled,
+//     seachable,
+//     name,
+//     styles,
+//     // modalContainerRef,
+// }) => {
+//     const [isOpen, setIsOpen] = useState(false);
+//     // Use the initialValue prop for the controlled state
+//     // const [value, setValue] = useState<string>(initialValue);
+//     const {modalContainerRef} = useContainerContext()
+//     const value: string = useInputStore(name)
+//     const [search, setSearch] = useState<string>('');
+//     const highlightIndexRef = useRef<number>(0);
+//     const optionRefs = useRef<HTMLDivElement[]>([]);
+//     const [position, setPosition] = useState<{
+//         top: number;
+//         left: number;
+//         width: number;
+//         direction: "up" | "down";
+//     } | null>(null);
+//     const inputRef = useRef<HTMLDivElement>(null);
+//     const modalRef = useRef<HTMLDivElement>(null)
+//     const searchRef = useRef<HTMLInputElement>(null);
+
+//     // Sync external value changes if needed (useful if initialValue can change)
+//     // useEffect(() => {
+//     //     setValue(initialValue);
+//     // }, [initialValue]);
+
+//     useEffect(() => {
+//         const handleClickOutside = (event: MouseEvent) => {
+//             if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
+//                 // setIsOpen(false);
+//                 closeDropdown();
+//             }
+//         };
+//         document.addEventListener('mousedown', handleClickOutside);
+//         return () => {
+//             document.removeEventListener('mousedown', handleClickOutside);
+//         };
+//     }, []);
+
+//     const handleOptionClick = (selectedValue: string) => {
+//         // setValue(selectedValue);
+//         onSelect(selectedValue);
+//         setIsOpen(false);
+//     }
+
+//     // 2. Stable click handler function for options
+//     const handleOptionSelect = (option: DropdownOption) => {
+//         handleOptionClick(option.value);
+//     }
+
+//     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//         setSearch(e.target.value)
+//         updateHighlight(0)
+//     }
+    
+//     const filteredOptions = useMemo(() => {
+//         if (!search) return options;
+//         const lowered = search.toLowerCase();
+
+//         return options.filter((opt) => {
+//             const label = opt.label.toLowerCase();
+//             return label.indexOf(lowered) !== -1;
+//         });
+//         /////// ChatGPT says indexOf() is 30–40% faster than includes() and does not allocate regex objects.
+//         // return options.filter(option =>
+//         //     option.label.toLowerCase().includes(search.toLowerCase())
+//         // );
+//     }, [search, options]);
+
+//     const optionRefsCallback = useCallback((el: HTMLDivElement | null) => {
+//         if (!el) return;
+
+//         // Get index from dataset
+//         const label = el.dataset.label;
+//         if (!label) return;
+
+//         // Find index ONCE
+//         const idx = filteredOptions.findIndex(o => o.label === label);
+//         if (idx !== -1) {
+//             optionRefs.current[idx] = el;
+//         }
+//     }, [filteredOptions]);
+    
+//     useLayoutEffect(() => {
+//         if (isOpen && modalRef.current) {
+//             calculatePosition();
+//             updateHighlight(0);
+//         }
+//     }, [filteredOptions.length, isOpen]);
+
+
+
+//     const calculatePosition = () => {
+//         const inputRect = inputRef.current?.getBoundingClientRect();
+//         // Use document.documentElement.clientHeight for viewport height fallback
+//         const modalContainer = modalContainerRef?.current || document.documentElement;
+//         const modalRect = modalContainer.getBoundingClientRect();
+//         const dropdownRect = modalRef.current?.getBoundingClientRect()
+
+//         if (!inputRect || !dropdownRect) return;
+
+        
+//         const spaceBelow = modalRect.bottom - inputRect.bottom;
+//         const spaceAbove = inputRect.top - modalRect.top;
+        
+//         const direction =
+//         spaceBelow < spaceAbove
+//         ? "up"
+//         : "down";
+        
+        
+//         const scrollOffset = modalContainer === document.documentElement ? window.scrollY : 0;
+//         const top = direction === "down"
+//             ? inputRect.bottom + scrollOffset + styles.dropdownOffset!
+//             : inputRect.top - dropdownRect.height + scrollOffset - styles.dropdownOffset!
+
+//         setPosition({
+//             left: inputRect.left,
+//             width: inputRect.width,
+//             top,
+//             direction,
+//         });
+//     };
+
+//     const openDropdown = () => {
+//       if (disabled) return
+//       setIsOpen(true)
+//       highlightIndexRef.current = 0;
+//       setSearch('');
+//       setTimeout(() => {
+//           searchRef.current?.focus()
+//           updateHighlight(0);
+//       }, 10);
+//     }
+    
+//     const closeDropdown = () => {
+//       setIsOpen(false)
+//     }
+
+//     useEffect(() => {
+//         onToggleDropdown?.(isOpen);
+//     }, [isOpen])
+
+//     /** update highlight without rerender */
+//     const updateHighlight = (newIndex: number) => {
+//         if (filteredOptions.length === 0) return; // <-- FIX
+//         const oldIndex = highlightIndexRef.current;
+//         if (oldIndex == newIndex) return
+        
+//         // Remove highlight from old element
+//         optionRefs.current[oldIndex]?.classList.remove("bg-blue-100");
+//         // Add highlight to new element
+//         optionRefs.current[newIndex]?.classList.add("bg-blue-100");
+//         // Scroll the element into view
+//         optionRefs.current[newIndex]?.scrollIntoView({ block: "nearest" });
+        
+//         highlightIndexRef.current = newIndex;
+//     };
+
+//     // keyboard navigation
+//     const handleKeyDown = (e: React.KeyboardEvent) => {
+//         if (!isOpen) return;
+
+        
+//         if (e.key === "ArrowDown") {
+//             e.preventDefault();
+//             const next = Math.min(
+//                 highlightIndexRef.current + 1,
+//                 filteredOptions.length - 1
+//             );
+//             updateHighlight(next);
+//         }
+
+//         if (e.key === "ArrowUp") {
+//             e.preventDefault();
+//             const prev = Math.max(highlightIndexRef.current - 1, 0);
+//             updateHighlight(prev);
+//         }
+
+//         if (e.key === "Enter") {
+//             e.preventDefault();
+//             const chosen = filteredOptions[highlightIndexRef.current];
+//             if (chosen) {
+//                 handleOptionClick(chosen.value);
+//             }
+//         }
+
+//         if (e.key === "Escape") {
+//             // setIsOpen(false);
+//             closeDropdown();
+//             // inputRef.current?.focus(); // Return focus to the main input
+//         }
+//     };
+
+//     // const handleSelectOption = useCallback((opt : string) => {
+//     //     onSelect(opt);
+//     // }, [onSelect]);
+
+
+//     // JSX for the dropdown panel, placed in a separate variable for portal usage
+//     const dropdownPanel = isOpen ? (
+//         <div
+//             className={`fixed z-10 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-hidden ${styles.modalBoxStyles}`}
+//             style={{
+//                 top: position?.top,
+//                 left: position?.left,
+//                 width: position?.width,
+//             }}
+//             ref={modalRef}
+//             // Prevent outside click handler from firing when clicking the panel itself
+//             // onClick={(e) => e.stopPropagation()}
+//             onMouseDown={(e) => e.stopPropagation()}
+//         >
+//             {/* 🔍 Search box */}
+//             {
+//                 seachable && (
+//                     <div className="p-2 border-b border-gray-200">
+//                         <input
+//                             ref={searchRef}
+//                             type="text"
+//                             placeholder="Search..."
+//                             className="w-full px-3 py-1 border rounded-lg bg-gray-50 outline-none"
+//                             value={search}
+//                             onChange={handleSearchChange}
+//                             // Keep search input focused for typing
+//                             onClick={(e) => e.stopPropagation()}
+//                             onMouseDown={(e) => e.stopPropagation()}
+//                             onKeyDown={(e) => {
+//                                 e.stopPropagation();
+//                                 handleKeyDown(e);
+//                             }} // Listen for keyboard navigation here too
+//                         />
+//                     </div>
+//                 )
+//             }
+//             <div className="max-h-48 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+//                 {/* No Options Found */}
+//                 {
+//                     isEmptyArray(filteredOptions) ? (
+//                         <div className={`py-2 px-4 text-gray-500 ${styles.optionStyles}`}>
+//                             No options found.
+//                         </div>
+//                     ) : (
+//                         filteredOptions.map((option, index) => (
+//                             <OptionItem
+//                             key={option.value}
+//                             label={option.label}
+//                             isSelected={value === option.value}
+//                             isHighlighted = {highlightIndexRef.current === index}
+//                             name={name!}
+//                             optionClass={styles.optionStyles!}
+//                             onSelect={() => handleOptionSelect(option)}
+//                             ref={optionRefsCallback}
+//                             // ref={(el) => {
+//                             //     if (el) optionRefs.current[index] = el;
+//                             // }}
+//                         />
+//                         ))
+//                     )
+//                 }
+//             </div>
+//         </div>
+//     ) : null;
+
+//     // Determine the portal target (document.body is the safest default)
+//     const portalTarget = document.body;
+
+//     return (
+//         <div
+//             ref={inputRef}
+//             onClick={openDropdown}
+//             onKeyDown={handleKeyDown}
+//             onFocus={openDropdown}
+//             tabIndex={0} // Makes the div focusable for keyboard navigation
+//             className={`py-2 px-2 relative border-2 w-full h-12 flex justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${styles.inputStyles}`}
+//         >
+//             <span>{options.find((opt) => opt.value === value)?.label || 'Select an Option'}</span>
+//             <svg
+//                 className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+//                 fill="none"
+//                 stroke="currentColor"
+//                 viewBox="0 0 24 24"
+//                 xmlns="http://www.w3.org/2000/svg"
+//             >
+//                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+//             </svg>
+
+//             {/* 1. Use createPortal to render the dropdown outside the component's DOM */}
+//             {isOpen && portalTarget && dropdownPanel}
+//             {/* {isOpen && portalTarget && createPortal(dropdownPanel, portalTarget)} */}
+//         </div>
+//     )
+// }
+
+// export default memo(DropdownModal, (prev, next) => shallowOrDeepEqual(prev.options, next.options))
 
 
 

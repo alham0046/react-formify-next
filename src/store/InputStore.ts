@@ -3,6 +3,10 @@ import { isIndex } from "src/Utils/inputStoreUtils"
 
 type Listener = () => void
 
+const EMPTY_ARRAY: any[] = []
+
+const EMPTY_REF: React.RefObject<HTMLDivElement | null> = {current : null}
+
 class InputStore {
   private rawData = {} as Record<string, any>
   private state = {
@@ -12,6 +16,29 @@ class InputStore {
   }
 
   sharedContext = new Map<string, any>()
+
+  dropdownSearch = new Map<string, any[]>()
+
+  dropdownContext = new Map<string, React.RefObject<HTMLDivElement | null>>()
+
+  getDropdownContext(key: string) {
+    return this.dropdownContext.get(key) ?? EMPTY_REF
+  }
+
+  setDropdownContext(key: string, value: React.RefObject<HTMLDivElement | null>) {
+    this.dropdownContext.set(key, value)
+    // this.notify(key)
+  }
+
+  getDropdownSearch(key: string) {
+    // if (!this.dropdownSearch.has('si')) return EMPTY_ARRAY
+    return this.dropdownSearch.get(key) || EMPTY_ARRAY
+  }
+
+  setDropdownSearch(key: string, value: any[]) {
+    this.dropdownSearch.set(key, value)
+    this.notify(key)
+  }
 
   private isBatching = false
   private pendingKeys = new Set<string>()

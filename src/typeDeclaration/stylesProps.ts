@@ -1,11 +1,13 @@
-export interface StyleProp {
+export interface DropdownStyleProp {
+    dropdownOffset: number;
+    selectedStyles?: React.CSSProperties;
+    highlightedStyles?: React.CSSProperties;
     inputStyles?: string;
     placeholderStyles?: string;
     containerStyles?: string;
     modalBoxStyles?: string;
     optionBoxStyles?: string;
     optionStyles?: string;
-    dropdownOffset?: number;
 }
 
 export interface InputStyle {

@@ -1,14 +1,16 @@
 import * as React$1 from 'react';
 import React__default, { ReactNode, ReactElement, RefObject } from 'react';
 
-interface StyleProp {
+interface DropdownStyleProp {
+    dropdownOffset: number;
+    selectedStyles?: React.CSSProperties;
+    highlightedStyles?: React.CSSProperties;
     inputStyles?: string;
     placeholderStyles?: string;
     containerStyles?: string;
     modalBoxStyles?: string;
     optionBoxStyles?: string;
     optionStyles?: string;
-    dropdownOffset?: number;
 }
 interface InputStyle {
     borderWidth: number | string;
@@ -109,12 +111,14 @@ interface FullInputProps {
     /** NEW — generic dependent dropdown system */
     dependsOn?: string;
     optionsMap?: OptionMap;
+    children?: React.ReactNode;
     options: SelectOption[] | string[];
     initialValue?: string;
     initialLabel?: string;
     disabled?: boolean | string;
     hideElement?: boolean | string;
-    styles?: StyleProp;
+    style?: Partial<InputStyle> & Partial<Pick<DropdownStyleProp, 'dropdownOffset'>>;
+    twStyle?: Omit<DropdownStyleProp, 'dropdownOffset'>;
     searchable?: boolean;
     onDisableChange?: (args: {
         state: boolean;
@@ -125,12 +129,6 @@ interface FullInputProps {
     }) => void;
     onChange?: (value: string) => void;
     onToggleDropdown?: (isOpen: boolean) => void;
-    onInputChange: (name: string, value: string) => void;
-    isArrayObject?: boolean;
-    arrayData?: {
-        arrayName: string;
-        arrayIndex: number;
-    };
 }
 type SelectProps = Omit<FullInputProps, "isArrayObject" | "arrayData" | "onInputChange">;
 declare const MemoizedSelectInput: React$1.NamedExoticComponent<SelectProps>;

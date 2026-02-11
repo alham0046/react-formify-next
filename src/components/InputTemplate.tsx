@@ -8,6 +8,7 @@ import { useContainerContext } from 'src/context/ContainerContext'
 interface FullTemplateProps {
     name: string
     children: React.ReactNode
+    childType: 'input' | 'dropdown'
     placeholder: string
     style?: Partial<InputStyle>
     placeholderStyles?: string
@@ -18,6 +19,7 @@ type TemplateProps = Omit<FullTemplateProps, "sharedStyles">
 const InputTemplate = forwardRef<InputRefProps, TemplateProps>(({
     name,
     children,
+    childType,
     placeholder,
     style,
     placeholderStyles = "",
@@ -36,7 +38,7 @@ const InputTemplate = forwardRef<InputRefProps, TemplateProps>(({
     return (
         <div
             className={`relative w-full group input-root`} /* onFocus={() => setFocusInputKey(name)} */
-            style={{ ['--bw' as any]: borderWidth, ['--bh' as any]: boxHeight, ['--po' as any]: placeHolderOffset }}
+            style={{ ['--bw' as any]: borderWidth, ['--bh' as any]: boxHeight, ['--po' as any]: placeHolderOffset, ['--float' as any]: childType === 'dropdown' ? 1 : 0 }}
         >
             {children}
             {!labelMode && <label
