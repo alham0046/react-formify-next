@@ -1,5 +1,5 @@
-import * as React$1 from 'react';
-import React__default, { ReactNode, ReactElement, RefObject } from 'react';
+import * as react from 'react';
+import react__default, { ReactNode, ReactElement, RefObject } from 'react';
 
 interface DropdownStyleProp {
     dropdownOffset: number;
@@ -69,12 +69,12 @@ type Month = `0${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}` | `1${0 | 1 | 2}`;
 type Day = `0${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}` | `${1 | 2}${number}` | `3${0 | 1}`;
 type DateString = `${Year}-${Month}-${Day}`;
 
-declare const MemoizedStrInput: React$1.NamedExoticComponent<InputProps & React$1.RefAttributes<InputRefProps>>;
+declare const MemoizedStrInput: react.NamedExoticComponent<InputProps & react.RefAttributes<InputRefProps>>;
 
 interface NumInputProps extends InputProps {
     stringify?: boolean;
 }
-declare const MemoizedNumInput: React__default.NamedExoticComponent<NumInputProps & React__default.RefAttributes<InputRefProps>>;
+declare const MemoizedNumInput: react__default.NamedExoticComponent<NumInputProps & react__default.RefAttributes<InputRefProps>>;
 
 interface ArrayHelpers {
     add: (item: any) => void;
@@ -89,13 +89,13 @@ interface ArrayContainerProps {
     getKey?: (item: any, index: number) => string;
     children: (item: any, index: number, helpers: ArrayHelpers) => ReactNode;
 }
-declare const _default$1: React$1.NamedExoticComponent<ArrayContainerProps>;
+declare const _default$3: react.NamedExoticComponent<ArrayContainerProps>;
 
 interface ObjContainerProps {
     name: string;
     children: ReactNode;
 }
-declare const MemoizedObjectContainer: React$1.NamedExoticComponent<ObjContainerProps>;
+declare const MemoizedObjectContainer: react.NamedExoticComponent<ObjContainerProps>;
 
 interface OptionMap {
     [key: string]: string[];
@@ -131,7 +131,7 @@ interface FullInputProps {
     onToggleDropdown?: (isOpen: boolean) => void;
 }
 type SelectProps = Omit<FullInputProps, "isArrayObject" | "arrayData" | "onInputChange">;
-declare const MemoizedSelectInput: React$1.NamedExoticComponent<SelectProps>;
+declare const MemoizedSelectInput: react.NamedExoticComponent<SelectProps>;
 
 interface FullAutoInputProps {
     initialData?: object;
@@ -142,14 +142,14 @@ interface FullAutoInputProps {
     bgColor?: string;
 }
 type AutoInputProps = Omit<FullAutoInputProps, "sharedStyles" | "bgColor" | "onInputChange">;
-declare const MemoizedAutoInput: React__default.NamedExoticComponent<AutoInputProps>;
+declare const MemoizedAutoInput: react__default.NamedExoticComponent<AutoInputProps>;
 
 interface DateProps extends InputProps {
     onDateSelect?: (date: string) => void;
     defaultTodayDate?: boolean;
     defaultDate?: DateString;
 }
-declare const memoizedDateInput: React__default.NamedExoticComponent<DateProps>;
+declare const memoizedDateInput: react__default.NamedExoticComponent<DateProps>;
 
 interface FullDisabledProps {
     initialValue?: string;
@@ -165,7 +165,24 @@ interface FullDisabledProps {
     name?: string;
 }
 type DisabledInputProps = Omit<FullDisabledProps, "isArrayObject" | "arrayData" | "onInputChange">;
-declare const MemoizedDisabledInput: React$1.NamedExoticComponent<DisabledInputProps>;
+declare const MemoizedDisabledInput: react.NamedExoticComponent<DisabledInputProps>;
+
+interface FormRowProps {
+    label: React.ReactNode;
+    separator?: React.ReactNode;
+    children: React.ReactNode;
+    className?: string;
+    labelWidth?: string | number;
+}
+declare const _default$2: react.NamedExoticComponent<FormRowProps>;
+
+type SearchOnChange<T> = (value: string | number) => T[] | Promise<T[]>;
+interface SearchInputProps<T> extends Exclude<InputProps, "onChange"> {
+    onChange: SearchOnChange<T>;
+    renderItem?: (item: T, index: number, active: boolean) => React.ReactNode;
+    onSelect?: (item: T) => void;
+}
+declare const _default$1: react.NamedExoticComponent<SearchInputProps<any> & react.RefAttributes<InputRefProps>>;
 
 type SubmitData = {
     data: Record<string, any> | null;
@@ -211,7 +228,7 @@ interface SubmitProps {
         onConfirm?: (data: any) => void;
     };
 }
-declare const MemoizedSubmitButton: React__default.NamedExoticComponent<SubmitProps & React__default.RefAttributes<SubmitButtonRef>>;
+declare const MemoizedSubmitButton: react__default.NamedExoticComponent<SubmitProps & react__default.RefAttributes<SubmitButtonRef>>;
 
 interface InputContainerProps {
     children: ReactNode;
@@ -224,7 +241,7 @@ interface InputContainerProps {
     };
     modalContainerRef?: RefObject<HTMLDivElement>;
 }
-declare const _default: React__default.NamedExoticComponent<InputContainerProps>;
+declare const _default: react__default.NamedExoticComponent<InputContainerProps>;
 
 interface FieldProps {
     [key: string]: any;
@@ -244,4 +261,4 @@ declare const SharedContext: {
     clear: () => void;
 };
 
-export { _default$1 as ArrayContainer, MemoizedAutoInput as AutoInput, ClearForm, type ConfirmationRenderProps, memoizedDateInput as DateInput, MemoizedDisabledInput as DisabledInput, _default as InputContainer, MemoizedNumInput as NumInput, MemoizedObjectContainer as ObjectContainer, ResetForm, MemoizedSelectInput as SelectInput, SharedContext, MemoizedStrInput as StrInput, MemoizedSubmitButton as SubmitButton, type SubmitButtonRef, type SubmitHandler, setEditData, setFieldValue };
+export { _default$3 as ArrayContainer, MemoizedAutoInput as AutoInput, ClearForm, type ConfirmationRenderProps, memoizedDateInput as DateInput, MemoizedDisabledInput as DisabledInput, _default$2 as FormRow, _default as InputContainer, MemoizedNumInput as NumInput, MemoizedObjectContainer as ObjectContainer, ResetForm, _default$1 as SearchInput, MemoizedSelectInput as SelectInput, SharedContext, MemoizedStrInput as StrInput, MemoizedSubmitButton as SubmitButton, type SubmitButtonRef, type SubmitHandler, setEditData, setFieldValue };
