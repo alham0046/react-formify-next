@@ -36,7 +36,6 @@ class InputStyles {
         if (states.has(state)) return
 
         states.add(state)
-        console.log('enabling state', key, state, states)
         this.apply(key, state)
     }
 

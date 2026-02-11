@@ -18,7 +18,7 @@ type SearchOnChange<T> = (
 interface SearchInputProps<T> extends Exclude<InputProps, "onChange"> {
     onChange: SearchOnChange<T>
     renderItem?: (item: T, index: number, active: boolean) => React.ReactNode
-    onSelect?: (item: T) => void
+    onSelect?: (args : { value : any, setValue : (value : any) => void}) => void
 }
 
 const SearchInput = forwardRef<InputRefProps, SearchInputProps<any>>(({ ...props }, ref) => {
@@ -46,7 +46,6 @@ const SearchInput = forwardRef<InputRefProps, SearchInputProps<any>>(({ ...props
         timeOutObj.current = setTimeout(async () => {
             // setSearch(value as string)
             const searchedData = await onChange(changedValue)
-            // console.log('searchedData', searchedData)
             inputStore.setDropdownSearch(`d_${modifiedName}`, searchedData)
             // setSearch(searchedData)
         }, 800);
@@ -54,19 +53,18 @@ const SearchInput = forwardRef<InputRefProps, SearchInputProps<any>>(({ ...props
     }
 
 
-    const handleSelect = (value: string) => {
-        // onChange(value)
-        inputStore.setValue(modifiedName, value)
-        onSelect?.(value)
+    // const handleSelect = (value: string) => {
+    //     // onChange(value)
+    //     inputStore.setValue(modifiedName, value)
+    //     onSelect?.(value)
 
-        // setSearch([])
-    }
+    //     // setSearch([])
+    // }
 
     if (hiddenValue) return null
 
     return (
         <div className={`relative ${containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
-            {/* {console.log('rendering StrInput', modifiedName)} */}
             <InputTemplate
                 name={modifiedName}
                 placeholder={placeholder}
@@ -87,7 +85,7 @@ const SearchInput = forwardRef<InputRefProps, SearchInputProps<any>>(({ ...props
                     {...rest}
                 />
             </InputTemplate>
-            <DropdownSearchModal onSelect={handleSelect} renderItem={renderItem} name={modifiedName} style={resolvedStyle} />
+            <DropdownSearchModal onSelect={onSelect} renderItem={renderItem} name={modifiedName} style={resolvedStyle} />
             {/* <DropdownSearchModal options={search} onSelect={handleSelect} open={search.length > 0} renderItem={renderItem} /> */}
             {children}
         </div>
@@ -149,7 +147,6 @@ export default memo(SearchInput)
 
 //     const onValueChange = (value: string | number) => {
 //         if (value === "") return
-//         // console.log('rendering searchinput', search.length)
 //         // clearTimeout(timeOutObj.current)
 //         // timeOutObj.current = setTimeout(async () => {
 //         //     // setSearch(value as string)

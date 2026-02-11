@@ -117,7 +117,6 @@ const SelectInput: FC<SelectProps> = ({
 
     return (
         <div className={`relative ${twStyle?.containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
-            {/* {console.log('rendering StrInput', modifiedName)} */}
             <InputTemplate
                 name={modifiedName}
                 placeholder={placeholder}

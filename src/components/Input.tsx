@@ -46,7 +46,6 @@ const Input = forwardRef<InputRefProps, InputProps>(({
     const {labelMode} = useFormLayout()
     const value: string | number = fixedValue ?? useInputStore(name) ?? ""
     const handlePreInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log('the string value is', e.target.value)
         const evalue = e.target.value
         // inputStore.currentValue = evalue
         if (maxLength && evalue.length == maxLength + 1) {
@@ -76,20 +75,17 @@ const Input = forwardRef<InputRefProps, InputProps>(({
 
 
     const handleBlur = () => {
-        // console.log('blurred')
         inputStylesStore.disable(name, FieldVisualState.Focus)
         const data = inputStore.getSnapshot().inputData
         onBlur?.({ currentValue: value ?? "", allData: data as Record<string, any> })
     }
     const handleFocus = () => {
         inputStylesStore.enable(name, FieldVisualState.Focus)
-        // console.log('blurred')
         onFocus?.(name)
     }
 
     const handleKeyPresses = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-            console.log('enter pressed')
             const data = inputStore.getSnapshot().inputData
             onEnterPress?.({ currentValue: value ?? "", allData: data as Record<string, any> })
         }

@@ -50,7 +50,6 @@ const DateInput: FC<DateProps> = forwardRef<InputRefProps, DateProps>(({
 
     return (
         <div className={`relative ${containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
-            {/* {console.log('rendering StrInput', modifiedName)} */}
             <InputTemplate
                 name={modifiedName}
                 placeholder={placeholder}

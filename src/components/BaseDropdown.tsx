@@ -56,7 +56,6 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
   })
 
   const filteredOptions: (string | DropdownOption)[] = useMemo(() => {
-    // console.log('inside filteredoptions', name)
     if (!search) return options;
     const lowered = search.toLowerCase();
 
@@ -128,7 +127,6 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
       style={position}
       onMouseDown={(e) => e.stopPropagation()}
     >
-      {/* {console.log('the position is')} */}
       {searchable && (
         <div className="p-2 border-b">
           <input

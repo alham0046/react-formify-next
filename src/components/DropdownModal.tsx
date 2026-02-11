@@ -40,7 +40,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
     const rotateRef = useRef<RotatingDropdownRef>(null)
     const [isOpen, setIsOpen] = useState(false);
     const [label, setLabel] = useState(value ||'Select an Option');
-    console.log('inside dropdownmodal', style)
     const {inputInlineStyle, dropdownOffset} = style
     const {optionStyles="", modalBoxStyles="", inputStyles=""} = twStyle
     
@@ -62,7 +61,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
 
     const handleOptionSelect = useCallback((option: DropdownOption) => {
         const selectedValue = option.value;
-        console.log('selected value', selectedValue)
         closeDropdown();
         setLabel(selectedValue)
         onSelect(selectedValue);
@@ -81,7 +79,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
     }, [isOpen])
 
     useEffect(() => {
-        // console.log('dropdown state changed', isOpen)
         onToggleDropdown?.(isOpen);
     }, [isOpen])
 
@@ -95,7 +92,6 @@ const DropdownModal: FC<DropdownModalProps> = ({
             style={inputInlineStyle}
             className={`relative w-full flex input-border justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${inputStyles}`}
         >
-            {/* {console.log('rendering dropdown modal with options', isOpen)} */}
             <span>{label}</span>
             <RotatingDropdown ref={rotateRef} />
             {isOpen && (

@@ -180,7 +180,10 @@ type SearchOnChange<T> = (value: string | number) => T[] | Promise<T[]>;
 interface SearchInputProps<T> extends Exclude<InputProps, "onChange"> {
     onChange: SearchOnChange<T>;
     renderItem?: (item: T, index: number, active: boolean) => React.ReactNode;
-    onSelect?: (item: T) => void;
+    onSelect?: (args: {
+        value: any;
+        setValue: (value: any) => void;
+    }) => void;
 }
 declare const _default$1: react.NamedExoticComponent<SearchInputProps<any> & react.RefAttributes<InputRefProps>>;
 

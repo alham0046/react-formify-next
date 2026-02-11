@@ -8,7 +8,8 @@ interface DropdownSearchModalProps<T> {
     // options: T[]
     style: InputStyle & DropdownStyleProp
     name: string
-    onSelect: (item: T) => void
+    onSelect?: (args : { value : any, setValue : (value : any) => void}) => void
+    // onSelect: (item: T, setValue: (value: any) => void) => void
     renderItem?: (item: T, index: number, active: boolean) => React.ReactNode
 }
 
@@ -20,11 +21,14 @@ const DropdownSearchModal: React.FC<DropdownSearchModalProps<any>> = ({
     onSelect,
     renderItem,
 }) => {
-    console.log('lkdjfgos')
     const options: any[] = useSyncExternalStore(
         (listener) => inputStore.subscribe(`d_${name}`, listener),
         () => { return inputStore.getDropdownSearch(`d_${name}`) }
     )
+
+    const setDropdownValue = (value: any) => {
+        inputStore.setValue(name, value)
+    }
 
     const inputRef = inputStore.getDropdownContext(`ref_${name}`)
 
@@ -38,16 +42,24 @@ const DropdownSearchModal: React.FC<DropdownSearchModalProps<any>> = ({
 
     const { dropdownOffset } = style
 
-    console.log('logging outside')
 
     const optionLength = options?.length > 0 || false
 
     // Reset active index when options change
 
     const handleOptionSelect = (opt: any) => {
-        console.log('opt', opt)
-        onSelect?.(opt)
-        inputStore.setValue(name, opt)
+        if (onSelect) {
+            onSelect({value : opt, setValue : setDropdownValue})
+        } else {
+            const finalValue =
+                typeof opt === "object" && opt !== null && "value" in opt
+                    ? (opt as any).value
+                    : opt
+
+            inputStore.setValue(name, finalValue)
+        }
+        // onSelect?.(opt)
+        // inputStore.setValue(name, opt)
         // inputStore.setDropdownSearch(`d_${name}`, [])
         closeDropdown()
     }
@@ -75,7 +87,6 @@ const DropdownSearchModal: React.FC<DropdownSearchModalProps<any>> = ({
 
     return (
         <>
-            {/* {console.log('optionLength', options)} */}
             <BaseDropdown
                 open={optionLength}
                 options={options}
@@ -222,7 +233,6 @@ export default memo(DropdownSearchModal)
 //     role="listbox"
 //     className="absolute z-50 mt-1 w-full rounded-md border bg-white shadow-md"
 //     >
-//     {console.log('rendering DropdownSearchModal')}
 //     {options.map((item, index) => {
 //         const active = index === activeIndex
 
