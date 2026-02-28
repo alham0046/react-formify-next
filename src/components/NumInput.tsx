@@ -9,18 +9,23 @@ import { isIndex } from '../Utils/Helper';
 import { useFieldName } from '../hooks/useFieldName';
 import { inputStore } from 'src/store/InputStore';
 import Input from './Input';
+import { useStyles } from 'src/hooks/useStylingMods';
 
 interface NumInputProps extends InputProps {
     stringify?: boolean
 }
 
-const NumInput = forwardRef<InputRefProps, NumInputProps>(({...props}, ref) => {
-    const {placeholder, name,children,style,placeholderStyles,onDisableChange, initialValue="", disabled=false, hideElement=false, containerStyles="", privacy=false, stringify=false, ...rest} = props
+const NumInput = forwardRef<InputRefProps, NumInputProps>(({ ...props }, ref) => {
+    const { placeholder, name, children, style,twStyle, onDisableChange, initialValue = "", disabled = false, hideElement = false, privacy = false, stringify = false, ...rest } = props
     const modifiedName = useFieldName(placeholder, name)
 
     useEffect(() => {
         handleInitialValue(modifiedName, initialValue)
     }, [])
+
+    const { resolvedStyle, tw } = useStyles(style, twStyle)
+
+    const { boxWidth, containerStyles, inputInlineStyle } = resolvedStyle
 
     const stringValidation = (data: number) => {
         if (!stringify) {
@@ -62,19 +67,20 @@ const NumInput = forwardRef<InputRefProps, NumInputProps>(({...props}, ref) => {
     if (hiddenValue) return null
 
     return (
-        <div className={`relative ${containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
+        <div className={`relative ${tw.twContainerStyles}`} style={{...containerStyles, width: boxWidth}} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
             <InputTemplate
                 name={modifiedName}
                 placeholder={placeholder}
-                style={style}
+                style={resolvedStyle}
                 childType='input'
-                placeholderStyles={placeholderStyles}
+                placeholderStyles={tw.twPlaceholderStyles}
             >
                 <Input
                     ref={ref}
                     name={modifiedName}
                     placeholder={placeholder}
-                    inputInlineStyle={style?.inputInlineStyle}
+                    inputInlineStyle={inputInlineStyle}
+                    inputStyles={tw.twInputStyles}
                     disabled={disabledValue}
                     type={privacy ? 'password' : 'number'}
                     handleChange={handleChange}

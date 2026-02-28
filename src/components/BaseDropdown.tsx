@@ -11,7 +11,10 @@ export interface DropdownOption {
 export interface BaseDropdownProps {
   open: boolean
   options: DropdownOption[] | string[]
+  name: string
+  twOptionBoxStyles: string
   onSelect: (item: string | DropdownOption) => void
+  value?: string
   close: () => void
   inputRef: React.RefObject<HTMLDivElement | null>
   dropdownOffset?: number
@@ -19,7 +22,9 @@ export interface BaseDropdownProps {
     item: string | DropdownOption,
     index: number,
     highlighted: boolean,
-    ref: (el: HTMLDivElement | null) => void
+    ref: (el: HTMLDivElement | null) => void,
+    onHover: () => void,
+    isSelected: boolean
   ) => React.ReactNode
   searchable?: boolean
   onSearchChange?: (v: string) => void
@@ -29,26 +34,29 @@ export interface BaseDropdownProps {
   //   left?: number
   //   width?: number
   // }
-  className?: string
+  // className?: string
 }
 
 const BaseDropdown: React.FC<BaseDropdownProps> = ({
   open,
   options,
+  name,
+  twOptionBoxStyles,
   onSelect,
   close,
   renderItem,
+  value,
   inputRef,
   dropdownOffset = 0,
   searchable,
   onSearchChange,
   // position,
-  className = "",
+  // className = "",
 }) => {
   const [search, setSearch] = useState<string>('');
   const modalRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
-  const { position, calculatePosition } = useDropdownPosition({
+  const { calculatePosition } = useDropdownPosition({
     modalRef: modalRef,
     fixedRef: inputRef,
     isOpen: open,
@@ -69,6 +77,7 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
     highlightIndexRef,
     handleKeyDown,
     registerOption,
+    updateHighlight,
     reset,
   } = useDropdownNavigation(filteredOptions, close)
 
@@ -123,13 +132,19 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
   return (
     <div
       ref={modalRef}
-      className={`fixed z-50 bg-white border rounded-lg shadow-xl ${className}`}
-      style={position}
+      className={`fixed z-50 top-0 left-0 ${twOptionBoxStyles}`}
+      style={{
+        visibility: 'hidden',
+        willChange: 'transform',
+        pointerEvents: 'auto'
+      }}
+      // style={position}
       onMouseDown={(e) => e.stopPropagation()}
     >
       {searchable && (
         <div className="p-2 border-b">
           <input
+            id={`search_${name}`}
             ref={searchRef}
             value={search}
             onChange={(e) => handleSearch(e)}
@@ -150,7 +165,9 @@ const BaseDropdown: React.FC<BaseDropdownProps> = ({
               key={typeof item === "string" ? item : item.value}
               item={item}
               index={index}
+              updateHighlight={updateHighlight}
               highlighted={highlightIndexRef.current === index}
+              isSelected={value === ((item as DropdownOption)?.value || item)}
               register={registerOption(index)}
               renderItem={renderItem}
             />

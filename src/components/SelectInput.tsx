@@ -1,4 +1,4 @@
-import { type FC, memo, useCallback, useEffect } from 'react';
+import { type FC, memo, useCallback, useEffect, useMemo } from 'react';
 import SelectTemplate from './SelectTemplate';
 import { useComputedExpression } from '../hooks/useComputedExpression';
 import { setFieldValue } from '../Utils/SetFieldValue';
@@ -8,9 +8,11 @@ import { inputStore } from 'src/store/InputStore';
 import { handleInitialValue } from 'src/Utils/setInitialValue';
 import InputTemplate from './InputTemplate';
 import DropdownModal from './DropdownModal';
-import { DropdownStyleProp, InputStyle } from 'src/typeDeclaration/stylesProps';
+import { DropdownStyleProp, InputStyle, TWDropdownStyleProp, TWInputStyleProp } from 'src/typeDeclaration/stylesProps';
 import { useContainerContext } from 'src/context/ContainerContext';
 import { DEFAULT_DROPDOWN_STYLE } from 'src/styles/DropdownStyles';
+import { resolveTwStyles } from 'src/Utils/resolveTwStyles';
+import { DropdownContext } from 'src/context/DropdownContext';
 
 interface SelectOption {
     label: string;
@@ -29,8 +31,8 @@ interface FullInputProps {
     initialLabel?: string
     disabled?: boolean | string
     hideElement?: boolean | string
-    style?: Partial<InputStyle> & Partial<Pick<DropdownStyleProp, 'dropdownOffset'>>
-    twStyle?: Omit<DropdownStyleProp, 'dropdownOffset'>
+    style?: Partial<InputStyle & DropdownStyleProp>
+    twStyle?: Partial<TWDropdownStyleProp & TWInputStyleProp>
     // styles?: StyleProp
     searchable?: boolean
     onDisableChange?: (args: {
@@ -56,7 +58,7 @@ const SelectInput: FC<SelectProps> = ({
     onToggleDropdown,
     optionsMap,
     initialLabel,
-    twStyle ={},
+    twStyle,
     disabled = false,
     hideElement = false,
     searchable = false,
@@ -66,7 +68,11 @@ const SelectInput: FC<SelectProps> = ({
 }) => {
     const modifiedName = useFieldName(placeholder, name)
 
-    const {sharedStyles, modalContainerRef} = useContainerContext()
+    useEffect(() => {
+        handleInitialValue(modifiedName, initialValue)
+    }, [])
+
+    // const { sharedStyles, modalContainerRef } = useContainerContext()
 
     const handleOnDisableChange = useCallback((value: any) => {
         setFieldValue({ [modifiedName]: value })
@@ -76,11 +82,35 @@ const SelectInput: FC<SelectProps> = ({
 
     const hiddenValue: boolean = useComputedExpression(hideElement)
 
-    const resolvedStyle: InputStyle & Pick<DropdownStyleProp, 'dropdownOffset'> = {
-            ...DEFAULT_DROPDOWN_STYLE,
-            ...sharedStyles,
+    const { sharedDropdownStyles, sharedDropdownTw, modalContainerRef } = useContainerContext()
+
+    const resolvedStyle: Partial<InputStyle & DropdownStyleProp> = useMemo(() => {
+        if (!style) return sharedDropdownStyles
+        return ({
+            ...sharedDropdownStyles,
             ...style, // 👈 highest priority
-        }
+        })
+    }, [sharedDropdownStyles, style])
+
+    // const resolvedTwStyle: TWDropdownStyleProp = {
+    //     ...TW_DEFAULT_DROPDOWN_STYLE,
+    //     ...twStyle, // 👈 highest priority
+    // }
+    const tw = useMemo(() => {
+        if (!twStyle) return sharedDropdownTw
+        return (resolveTwStyles({
+            defaultStyles: sharedDropdownTw,
+            localStyles: twStyle, // from props
+        }))
+    }, [sharedDropdownTw, twStyle])
+
+    const {boxWidth, containerStyles, inputInlineStyle} = resolvedStyle
+
+    // const resolvedStyle: InputStyle & Pick<DropdownStyleProp, 'dropdownOffset'> = {
+    //     ...DEFAULT_DROPDOWN_STYLE,
+    //     ...sharedStyles,
+    //     ...style, // 👈 highest priority
+    // }
 
     // const {inputInlineStyle} = resolvedStyle
 
@@ -116,29 +146,31 @@ const SelectInput: FC<SelectProps> = ({
     }
 
     return (
-        <div className={`relative ${twStyle?.containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
-            <InputTemplate
-                name={modifiedName}
-                placeholder={placeholder}
-                style={style}
-                placeholderStyles={twStyle?.placeholderStyles}
-                childType={'dropdown'}
-            >
-                <DropdownModal
-                    onSelect={handleSelect}
-                    options={staticOptions}
+        <DropdownContext.Provider value={{twHighlightedStyles : tw.twHighlightedStyles, highlightedStyle : resolvedStyle.highlightedStyles}}>
+            <div className={`relative ${tw.twContainerStyles}`} style={{...containerStyles, width: boxWidth}} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
+                <InputTemplate
                     name={modifiedName}
+                    placeholder={placeholder}
                     style={resolvedStyle}
-                    twStyle={twStyle}
-                    onToggleDropdown={onToggleDropdown}
-                    searchable={searchable}
-                    disabled={disabledValue}
-                    modalContainerRef={modalContainerRef}
-                    
-                />
-            </InputTemplate>
-            {children}
-        </div>
+                    placeholderStyles={tw.twPlaceholderStyles}
+                    childType={'dropdown'}
+                >
+                    <DropdownModal
+                        onSelect={handleSelect}
+                        options={staticOptions}
+                        name={modifiedName}
+                        style={resolvedStyle}
+                        twStyle={tw}
+                        onToggleDropdown={onToggleDropdown}
+                        searchable={searchable}
+                        disabled={disabledValue}
+                        modalContainerRef={modalContainerRef}
+    
+                    />
+                </InputTemplate>
+                {children}
+            </div>
+        </DropdownContext.Provider>
     );
 };
 

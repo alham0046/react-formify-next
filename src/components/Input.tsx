@@ -117,7 +117,8 @@ const Input = forwardRef<InputRefProps, InputProps>(({
             onKeyDown={handleKeyPresses}
             onChange={handlePreInput}
             style={inputInlineStyle}
-            className={labelMode ? inputStyles : `w-full outline-none rounded-lg input-border bg-transparent appearance-none peer ${inputStyles}`}
+            className={labelMode ? inputStyles : `input-border ${inputStyles}`}
+            // className={labelMode ? inputStyles : `w-full outline-none rounded-lg input-border bg-transparent appearance-none peer ${inputStyles}`}
             placeholder={labelMode ? placeholder : " "}
             disabled={disabled}
             required

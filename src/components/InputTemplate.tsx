@@ -1,7 +1,7 @@
 import React, { type ComponentProps, forwardRef, memo, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import type { InputRefProps } from '../typeDeclaration/inputProps'
 import { inputStore } from 'src/store/InputStore'
-import { DEFAULT_INPUT_STYLE, InputStyle } from 'src/typeDeclaration/stylesProps'
+import { InputStyle } from 'src/typeDeclaration/stylesProps'
 import { useFormLayout } from 'src/context/LabelLayoutContext'
 import { useContainerContext } from 'src/context/ContainerContext'
 
@@ -10,7 +10,7 @@ interface FullTemplateProps {
     children: React.ReactNode
     childType: 'input' | 'dropdown'
     placeholder: string
-    style?: Partial<InputStyle>
+    style: Partial<InputStyle>
     placeholderStyles?: string
 }
 
@@ -24,14 +24,7 @@ const InputTemplate = forwardRef<InputRefProps, TemplateProps>(({
     style,
     placeholderStyles = "",
 }, ref) => {
-    const { sharedStyles } = useContainerContext()
-    const resolvedStyle: InputStyle = {
-        ...DEFAULT_INPUT_STYLE,
-        ...sharedStyles,
-        ...style, // 👈 highest priority
-    }
-
-    const { borderWidth, boxHeight, boxWidth, placeHolderOffset, inputInlineStyle, placeholderInlineStyle } = resolvedStyle
+    const { borderWidth, boxHeight, placeHolderOffset, placeholderInlineStyle } = style
     const { labelMode } = useFormLayout()
     const bgColor = inputStore.backgroundColor
 

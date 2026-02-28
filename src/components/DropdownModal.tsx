@@ -1,6 +1,6 @@
 import { type FC, memo, useCallback, useEffect, useRef, useState } from "react";
 import { useInputStore } from "../hooks/useInputStore";
-import { DropdownStyleProp, InputStyle } from "../typeDeclaration/stylesProps";
+import { DropdownStyleProp, InputStyle, TWDropdownStyleProp, TWInputStyleProp } from "../typeDeclaration/stylesProps";
 import { shallowOrDeepEqual } from "../functions/shallowOrDeepEqual";
 import RotatingDropdown, { RotatingDropdownRef } from "src/Icons/RotatingDropdown";
 import BaseDropdown from "./BaseDropdown";
@@ -15,9 +15,10 @@ interface DropdownModalProps {
     onSelect: (value: string) => void;
     disabled: boolean;
     searchable: boolean;
+    initialLabel?: string
     // style: StyleProp
-    style: Partial<InputStyle> & Pick<DropdownStyleProp, 'dropdownOffset'>
-    twStyle: Omit<DropdownStyleProp, 'dropdownOffset'>
+    style: Partial<InputStyle & DropdownStyleProp>
+    twStyle: Partial<TWDropdownStyleProp & TWInputStyleProp>
     name: string;
     onToggleDropdown?: (isOpen: boolean) => void;
     modalContainerRef?: React.RefObject<HTMLDivElement>;
@@ -29,6 +30,7 @@ const DropdownModal: FC<DropdownModalProps> = ({
     options,
     onSelect,
     onToggleDropdown,
+    initialLabel,
     disabled,
     searchable,
     name,
@@ -41,7 +43,7 @@ const DropdownModal: FC<DropdownModalProps> = ({
     const [isOpen, setIsOpen] = useState(false);
     const [label, setLabel] = useState(value ||'Select an Option');
     const {inputInlineStyle, dropdownOffset} = style
-    const {optionStyles="", modalBoxStyles="", inputStyles=""} = twStyle
+    const {twInputStyles, twOptionBoxStyles="", twOptionItemStyles, twSelectedStyles} = twStyle
     
     const inputRef = useRef<HTMLDivElement>(null);
 
@@ -89,15 +91,26 @@ const DropdownModal: FC<DropdownModalProps> = ({
             // onKeyDown={handleKeyDown}
             onFocus={openDropdown}
             tabIndex={0} // Makes the div focusable for keyboard navigation
-            style={inputInlineStyle}
-            className={`relative w-full flex input-border justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${inputStyles}`}
+            // style={inputInlineStyle}
+            className={`relative`}
+            // className={`relative w-full flex input-border justify-between items-center rounded-lg outline-none bg-transparent cursor-pointer ${twInputStyles}`}
         >
-            <span>{label}</span>
-            <RotatingDropdown ref={rotateRef} />
+            {/* <span>{label}</span>
+            <RotatingDropdown ref={rotateRef} /> */}
+            <div
+            className={`input-border cursor-pointer ${twInputStyles}`}
+            style={inputInlineStyle}
+            >
+                {value || initialLabel || 'Select an Option'}
+                </div>
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2"><RotatingDropdown ref={rotateRef} /></div>
             {isOpen && (
                 <BaseDropdown
                     open={isOpen}
                     options={options}
+                    name={name}
+                    twOptionBoxStyles={twOptionBoxStyles}
+                    value={value}
                     close={closeDropdown}
                     onSelect={(opt) => {
                       handleOptionSelect(opt as DropdownOption)
@@ -109,15 +122,17 @@ const DropdownModal: FC<DropdownModalProps> = ({
                     // onSearchChange={(v) => {
                     //   setSearch(v)
                     // }}
-                    renderItem={(opt, index, highlighted, ref) => {
+                    renderItem={(opt, index, highlighted, ref, onHover, isSelected) => {
                         const option = opt as DropdownOption
                         return (
                         <div
                           key={option.value}
                           ref={ref}
-                          className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-100 ${
-                            highlighted ? "bg-gray-100" : ""
-                          }`}
+                          onMouseEnter={onHover}
+                          className={`${twOptionItemStyles} ${isSelected ? twSelectedStyles : ""}`}
+                        //   className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-100 ${
+                        //     highlighted ? "bg-gray-100" : ""
+                        //   }`}
                           onMouseDown={(e) => {
                             e.preventDefault()
                             handleOptionSelect(option)

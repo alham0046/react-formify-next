@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useSyncExternalStore } from 'react'
+import React, { CSSProperties, memo, useEffect, useSyncExternalStore } from 'react'
 import type { DropdownStyleProp, InputStyle } from '../typeDeclaration/stylesProps'
 import BaseDropdown from './BaseDropdown'
 import { inputStore } from 'src/store/InputStore'
@@ -6,9 +6,14 @@ import { inputStore } from 'src/store/InputStore'
 interface DropdownSearchModalProps<T> {
     // open: boolean
     // options: T[]
-    style: InputStyle & DropdownStyleProp
+    // style: InputStyle & DropdownStyleProp
+    dropdownOffset: number
+    twOptionBoxStyles: string
+    twOptionItemStyles: string
+    optionBoxStyles?: CSSProperties
+    optionItemStyles?: CSSProperties
     name: string
-    onSelect?: (args : { value : any, setValue : (value : any) => void}) => void
+    onSelect?: (args: { value: any, setValue: (value: any) => void }) => void
     // onSelect: (item: T, setValue: (value: any) => void) => void
     renderItem?: (item: T, index: number, active: boolean) => React.ReactNode
 }
@@ -17,7 +22,12 @@ const DropdownSearchModal: React.FC<DropdownSearchModalProps<any>> = ({
     // open,
     // options,
     name,
-    style,
+    // style,
+    dropdownOffset,
+    twOptionBoxStyles,
+    twOptionItemStyles,
+    optionBoxStyles,
+    optionItemStyles,
     onSelect,
     renderItem,
 }) => {
@@ -40,7 +50,7 @@ const DropdownSearchModal: React.FC<DropdownSearchModalProps<any>> = ({
     //     options,
     // })
 
-    const { dropdownOffset } = style
+    // const { dropdownOffset } = style
 
 
     const optionLength = options?.length > 0 || false
@@ -49,7 +59,7 @@ const DropdownSearchModal: React.FC<DropdownSearchModalProps<any>> = ({
 
     const handleOptionSelect = (opt: any) => {
         if (onSelect) {
-            onSelect({value : opt, setValue : setDropdownValue})
+            onSelect({ value: opt, setValue: setDropdownValue })
         } else {
             const finalValue =
                 typeof opt === "object" && opt !== null && "value" in opt
@@ -64,23 +74,23 @@ const DropdownSearchModal: React.FC<DropdownSearchModalProps<any>> = ({
         closeDropdown()
     }
 
-    useEffect(() => {
-        if (!optionLength) return;
+    // useEffect(() => {
+    //     if (!optionLength) return;
 
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                inputRef.current &&
-                !inputRef.current.contains(event.target as Node)
-            ) {
-                closeDropdown();
-            }
-        };
+    //     const handleClickOutside = (event: MouseEvent) => {
+    //         if (
+    //             inputRef.current &&
+    //             !inputRef.current.contains(event.target as Node)
+    //         ) {
+    //             closeDropdown();
+    //         }
+    //     };
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [optionLength, inputRef]);
+    //     document.addEventListener('mousedown', handleClickOutside);
+    //     return () => {
+    //         document.removeEventListener('mousedown', handleClickOutside);
+    //     };
+    // }, [optionLength, inputRef]);
 
 
     if (!optionLength) return null
@@ -89,6 +99,8 @@ const DropdownSearchModal: React.FC<DropdownSearchModalProps<any>> = ({
         <>
             <BaseDropdown
                 open={optionLength}
+                name={name}
+                twOptionBoxStyles={twOptionBoxStyles}
                 options={options}
                 close={closeDropdown}
                 onSelect={(opt) => {
@@ -100,12 +112,15 @@ const DropdownSearchModal: React.FC<DropdownSearchModalProps<any>> = ({
                 // onSearchChange={(v) => {
                 //   setSearch(v)
                 // }}
-                renderItem={(item, index, highlighted, ref) => (
+                renderItem={(item, index, highlighted, ref, onHover) => (
                     <div
                         key={index}
                         ref={ref}
-                        className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${highlighted ? "bg-gray-100" : ""
-                            }`}
+                        // className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${highlighted ? "bg-gray-100" : ""
+                        //     }`}
+                        className={`${twOptionItemStyles}`}
+                        style={optionItemStyles}
+                        onMouseEnter={onHover}
                         onMouseDown={(e) => {
                             e.preventDefault()
                             handleOptionSelect(item)

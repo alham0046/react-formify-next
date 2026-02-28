@@ -6,6 +6,7 @@ import { useFieldName } from '../hooks/useFieldName';
 import { handleInitialValue } from '../Utils/setInitialValue';
 import { inputStore } from 'src/store/InputStore';
 import Input from './Input';
+import { useStyles } from 'src/hooks/useStylingMods';
 
 interface DateProps extends InputProps {
     onDateSelect?: (date: string) => void
@@ -21,10 +22,8 @@ const DateInput: FC<DateProps> = forwardRef<InputRefProps, DateProps>(({
     defaultTodayDate = true,
     disabled = false,
     style,
+    twStyle,
     hideElement = false,
-    containerStyles = "",
-    inputStyles = "",
-    placeholderStyles = "",
     defaultDate,
     name,
 }, ref) => {
@@ -35,6 +34,11 @@ const DateInput: FC<DateProps> = forwardRef<InputRefProps, DateProps>(({
     useEffect(() => {
         handleInitialValue(modifiedName, initialDate)
     }, [])
+
+    const { resolvedStyle, tw } = useStyles(style, twStyle)
+
+    const { boxWidth, containerStyles, inputInlineStyle } = resolvedStyle
+
     const handleDateSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newDate = e.target.value;
         inputStore.setValue(modifiedName, newDate)
@@ -49,23 +53,23 @@ const DateInput: FC<DateProps> = forwardRef<InputRefProps, DateProps>(({
     if (hiddenValue) return null
 
     return (
-        <div className={`relative ${containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
+        <div className={`relative ${tw.twContainerStyles}`} style={{...containerStyles, width: boxWidth}} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
             <InputTemplate
                 name={modifiedName}
                 placeholder={placeholder}
-                style={style}
+                style={resolvedStyle}
                 childType='input'
-                placeholderStyles={placeholderStyles}
+                placeholderStyles={tw.twPlaceholderStyles}
             >
                 <Input
                     ref={ref}
                     name={modifiedName}
                     placeholder={placeholder}
-                    inputInlineStyle={style?.inputInlineStyle}
+                    inputInlineStyle={inputInlineStyle}
                     disabled={disabledValue}
                     type='date'
                     handleChange={handleDateSelect}
-                    inputStyles={inputStyles}
+                    inputStyles={tw.twInputStyles}
                 // {...rest}
                 />
             </InputTemplate>

@@ -1,14 +1,15 @@
-import { InputStyle } from "./stylesProps";
+import { InputStyle, TWInputStyleProp } from "./stylesProps";
 
 export interface FullInputProps {
     placeholder: string;
-    containerStyles?: string;
+    // containerStyles?: string;
     maxLength?: number
     children?: React.ReactNode
-    inputStyles?: string;
-    placeholderStyles?: string;
+    // inputStyles?: string;
+    // placeholderStyles?: string;
     initialValue?: string;
     autoFocus?: boolean
+    twStyle?: Partial<TWInputStyleProp>
     style?: Partial<InputStyle>
     privacy?: boolean
     disabled?: string | boolean

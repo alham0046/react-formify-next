@@ -1,35 +1,43 @@
 import * as react from 'react';
-import react__default, { ReactNode, ReactElement, RefObject } from 'react';
+import react__default, { CSSProperties, ReactNode, ReactElement, RefObject } from 'react';
 
 interface DropdownStyleProp {
     dropdownOffset: number;
-    selectedStyles?: React.CSSProperties;
-    highlightedStyles?: React.CSSProperties;
-    inputStyles?: string;
-    placeholderStyles?: string;
-    containerStyles?: string;
-    modalBoxStyles?: string;
-    optionBoxStyles?: string;
-    optionStyles?: string;
+    selectedStyles: CSSProperties;
+    highlightedStyles: CSSProperties;
+    modalBoxStyles: CSSProperties;
+    optionBoxStyles: CSSProperties;
+    optionStyles: CSSProperties;
 }
 interface InputStyle {
     borderWidth: number | string;
     boxHeight: number | string;
     boxWidth: number | string;
     placeHolderOffset: number | string;
+    containerStyles: CSSProperties;
     inputInlineStyle?: Omit<React.CSSProperties, 'border' | 'borderWidth'>;
     placeholderInlineStyle?: React.CSSProperties;
+}
+interface TWDropdownStyleProp {
+    twSelectedStyles: string;
+    twHighlightedStyles: string;
+    twModalBoxStyles: string;
+    twOptionBoxStyles: string;
+    twOptionItemStyles: string;
+}
+interface TWInputStyleProp {
+    twInputStyles: string;
+    twPlaceholderStyles: string;
+    twContainerStyles: string;
 }
 
 interface FullInputProps$1 {
     placeholder: string;
-    containerStyles?: string;
     maxLength?: number;
     children?: React.ReactNode;
-    inputStyles?: string;
-    placeholderStyles?: string;
     initialValue?: string;
     autoFocus?: boolean;
+    twStyle?: Partial<TWInputStyleProp>;
     style?: Partial<InputStyle>;
     privacy?: boolean;
     disabled?: string | boolean;
@@ -117,8 +125,8 @@ interface FullInputProps {
     initialLabel?: string;
     disabled?: boolean | string;
     hideElement?: boolean | string;
-    style?: Partial<InputStyle> & Partial<Pick<DropdownStyleProp, 'dropdownOffset'>>;
-    twStyle?: Omit<DropdownStyleProp, 'dropdownOffset'>;
+    style?: Partial<InputStyle & DropdownStyleProp>;
+    twStyle?: Partial<TWDropdownStyleProp & TWInputStyleProp>;
     searchable?: boolean;
     onDisableChange?: (args: {
         state: boolean;
@@ -159,6 +167,7 @@ interface FullDisabledProps {
     placeholderStyles?: string;
     placeholder: string;
     style?: Partial<InputStyle>;
+    twStyle?: Partial<TWInputStyleProp>;
     privacy?: boolean;
     hideElement?: string | boolean;
     onChange?: (value: string | number) => void;
@@ -179,6 +188,8 @@ declare const _default$2: react.NamedExoticComponent<FormRowProps>;
 type SearchOnChange<T> = (value: string | number) => T[] | Promise<T[]>;
 interface SearchInputProps<T> extends Exclude<InputProps, "onChange"> {
     onChange: SearchOnChange<T>;
+    twStyle?: Partial<TWDropdownStyleProp & TWInputStyleProp>;
+    style?: Partial<InputStyle & DropdownStyleProp>;
     renderItem?: (item: T, index: number, active: boolean) => React.ReactNode;
     onSelect?: (args: {
         value: any;
@@ -235,13 +246,11 @@ declare const MemoizedSubmitButton: react__default.NamedExoticComponent<SubmitPr
 
 interface InputContainerProps {
     children: ReactNode;
-    inputContainerStyles?: string;
+    style?: CSSProperties;
+    className?: string;
     mode?: "default" | "edit";
-    sharedStyles?: {
-        placeholderStyles?: string;
-        inputStyles?: string;
-        [key: string]: any;
-    };
+    sharedStyles?: Partial<InputStyle>;
+    sharedTwStyles?: Partial<TWInputStyleProp>;
     modalContainerRef?: RefObject<HTMLDivElement>;
 }
 declare const _default: react__default.NamedExoticComponent<InputContainerProps>;

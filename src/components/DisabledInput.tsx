@@ -1,10 +1,11 @@
-import  { type FC, memo, useEffect } from 'react';
+import { type FC, memo, useEffect } from 'react';
 import InputTemplate from './InputTemplate';
 import { useFieldName } from '../hooks/useFieldName';
 import { handleInitialValue } from '../Utils/setInitialValue';
 import { useComputedExpression } from 'src/hooks/useComputedExpression';
-import { InputStyle } from 'src/typeDeclaration/stylesProps';
+import { InputStyle, TWInputStyleProp } from 'src/typeDeclaration/stylesProps';
 import Input from './Input';
+import { useStyles } from 'src/hooks/useStylingMods';
 
 interface FullDisabledProps {
     initialValue?: string;
@@ -14,6 +15,7 @@ interface FullDisabledProps {
     placeholderStyles?: string;
     placeholder: string;
     style?: Partial<InputStyle>
+    twStyle?: Partial<TWInputStyleProp>
     privacy?: boolean
     hideElement?: string | boolean
     onChange?: (value: string | number) => void
@@ -24,13 +26,12 @@ type DisabledInputProps = Omit<FullDisabledProps, "isArrayObject" | "arrayData" 
 
 const DisabledInput: FC<DisabledInputProps> = ({
     initialValue = "",
-    containerStyles = "",
     privacy = false,
     children,
     style,
+    twStyle,
     placeholder,
     hideElement = false,
-    placeholderStyles,
     name,
     ...rest
 }) => {
@@ -40,6 +41,10 @@ const DisabledInput: FC<DisabledInputProps> = ({
         handleInitialValue(modifiedName, initialValue)
     }, [])
 
+    const { resolvedStyle, tw } = useStyles(style, twStyle)
+
+    const { boxWidth, containerStyles, inputInlineStyle } = resolvedStyle
+
     const hiddenValue: boolean = useComputedExpression(hideElement)
 
     if (hiddenValue) {
@@ -48,18 +53,19 @@ const DisabledInput: FC<DisabledInputProps> = ({
 
 
     return (
-        <div className={`relative ${containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
+        <div className={`relative ${tw.twContainerStyles}`} style={{...containerStyles, width: boxWidth}} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
             <InputTemplate
                 name={modifiedName}
                 placeholder={placeholder}
-                style={style}
+                style={resolvedStyle}
                 childType='input'
-                placeholderStyles={placeholderStyles}
+                placeholderStyles={tw.twPlaceholderStyles}
             >
                 <Input
                     name={modifiedName}
                     placeholder={placeholder}
-                    inputInlineStyle={style?.inputInlineStyle}
+                    inputInlineStyle={inputInlineStyle}
+                    inputStyles={tw.twInputStyles}
                     disabled={true}
                     type={privacy ? 'password' : 'text'}
                     fixedValue={initialValue}

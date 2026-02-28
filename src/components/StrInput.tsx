@@ -7,15 +7,20 @@ import { handleInitialValue } from "../Utils/setInitialValue";
 import { useFieldName } from "../hooks/useFieldName";
 import { inputStore } from "src/store/InputStore";
 import Input from "./Input";
+import { useStyles } from "src/hooks/useStylingMods";
 
 
 const StrInput = forwardRef<InputRefProps, InputProps>(({...props}, ref) => {
-    const {placeholder, name,children,style,placeholderStyles, initialValue="", disabled=false, hideElement=false, containerStyles="", privacy=false, ...rest} = props
+    const {placeholder, name,children,style,twStyle, initialValue="", disabled=false, hideElement=false, privacy=false, ...rest} = props
     const modifiedName = useFieldName(placeholder, name)
 
     useEffect(() => {
         handleInitialValue(modifiedName, initialValue)
     }, [])
+
+    const {resolvedStyle, tw} = useStyles(style, twStyle)
+
+    const {boxWidth, containerStyles, inputInlineStyle} = resolvedStyle
 
     const disabledValue: boolean = useComputedExpression(disabled, modifiedName)
 
@@ -30,19 +35,20 @@ const StrInput = forwardRef<InputRefProps, InputProps>(({...props}, ref) => {
     if (hiddenValue) return null
     
     return (
-        <div className={`relative ${containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
+        <div className={`relative ${tw.twContainerStyles}`} style={{...containerStyles, width: boxWidth}} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
             <InputTemplate
                 name={modifiedName}
                 placeholder={placeholder}
-                style={style}
+                style={resolvedStyle}
                 childType="input"
-                placeholderStyles={placeholderStyles}
+                placeholderStyles={tw.twPlaceholderStyles}
             >
                 <Input
                     ref={ref}
                     name={modifiedName}
                     placeholder={placeholder}
-                    inputInlineStyle={style?.inputInlineStyle}
+                    inputInlineStyle={inputInlineStyle}
+                    inputStyles={tw.twInputStyles}
                     disabled={disabledValue}
                     type={privacy ? 'password' : 'text'}
                     handleChange={handleChange}
@@ -61,6 +67,74 @@ const MemoizedStrInput = memo(StrInput)
 MemoizedStrInput.displayName = 'StrInput';
 
 export default MemoizedStrInput;
+
+
+
+
+////// backup on 27/02/2026 to redesign the way of styling
+// import { forwardRef, memo, useEffect } from "react";
+// import type { InputProps, InputRefProps } from "../typeDeclaration/inputProps";
+// import { useInputStore } from "../hooks/useInputStore";
+// import { useComputedExpression } from "../hooks/useComputedExpression";
+// import InputTemplate from "./InputTemplate";
+// import { handleInitialValue } from "../Utils/setInitialValue";
+// import { useFieldName } from "../hooks/useFieldName";
+// import { inputStore } from "src/store/InputStore";
+// import Input from "./Input";
+
+
+// const StrInput = forwardRef<InputRefProps, InputProps>(({...props}, ref) => {
+//     const {placeholder, name,children,style,placeholderStyles, initialValue="", disabled=false, hideElement=false, containerStyles="", privacy=false, ...rest} = props
+//     const modifiedName = useFieldName(placeholder, name)
+
+//     useEffect(() => {
+//         handleInitialValue(modifiedName, initialValue)
+//     }, [])
+
+//     const disabledValue: boolean = useComputedExpression(disabled, modifiedName)
+
+//     const hiddenValue: boolean = useComputedExpression(hideElement)
+
+//     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//         // const nativeEvent = e.nativeEvent as unknown as InputEvent; // Type assertion to InputEvent
+//         // onChange?.(changedValue, nativeEvent.data);
+//         inputStore.setValue(modifiedName, e.target.value)
+//     }
+
+//     if (hiddenValue) return null
+    
+//     return (
+//         <div className={`relative ${containerStyles}`} /* style={{ display: hiddenValue ? 'none' : 'block', position : 'relative' }} */>
+//             <InputTemplate
+//                 name={modifiedName}
+//                 placeholder={placeholder}
+//                 style={style}
+//                 childType="input"
+//                 placeholderStyles={placeholderStyles}
+//             >
+//                 <Input
+//                     ref={ref}
+//                     name={modifiedName}
+//                     placeholder={placeholder}
+//                     inputInlineStyle={style?.inputInlineStyle}
+//                     disabled={disabledValue}
+//                     type={privacy ? 'password' : 'text'}
+//                     handleChange={handleChange}
+//                     {...rest}
+//                 />
+//             </InputTemplate>
+//             {children}
+//         </div>
+//     );
+// });
+
+// // 1. Export the memoized component
+// const MemoizedStrInput = memo(StrInput)
+
+// // 2. Set the displayName on the exported component
+// MemoizedStrInput.displayName = 'StrInput';
+
+// export default MemoizedStrInput;
 
 
 

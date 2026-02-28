@@ -1,13 +1,12 @@
+import { CSSProperties } from "react";
+
 export interface DropdownStyleProp {
     dropdownOffset: number;
-    selectedStyles?: React.CSSProperties;
-    highlightedStyles?: React.CSSProperties;
-    inputStyles?: string;
-    placeholderStyles?: string;
-    containerStyles?: string;
-    modalBoxStyles?: string;
-    optionBoxStyles?: string;
-    optionStyles?: string;
+    selectedStyles: CSSProperties;
+    highlightedStyles: CSSProperties;
+    modalBoxStyles: CSSProperties
+    optionBoxStyles: CSSProperties
+    optionStyles: CSSProperties
 }
 
 export interface InputStyle {
@@ -15,6 +14,7 @@ export interface InputStyle {
     boxHeight: number | string
     boxWidth: number | string
     placeHolderOffset: number | string
+    containerStyles: CSSProperties
     /* visuals only */
     inputInlineStyle?: Omit<
         React.CSSProperties,
@@ -23,11 +23,25 @@ export interface InputStyle {
     placeholderInlineStyle?: React.CSSProperties
 }
 
-export const DEFAULT_INPUT_STYLE: InputStyle = {
-  borderWidth: '2px',
-  boxHeight: '8px',
-  boxWidth: '100%',
-  placeHolderOffset: '16px',
+// export const DEFAULT_INPUT_STYLE: InputStyle = {
+//   borderWidth: '2px',
+//   boxHeight: '8px',
+//   boxWidth: '100%',
+//   placeHolderOffset: '16px',
+// }
+
+export interface TWDropdownStyleProp {
+    twSelectedStyles: string;
+    twHighlightedStyles: string
+    twModalBoxStyles: string;
+    twOptionBoxStyles: string;
+    twOptionItemStyles: string;
+}
+
+export interface TWInputStyleProp {
+    twInputStyles: string
+    twPlaceholderStyles: string
+    twContainerStyles: string
 }
 
 // export interface InputStyle {
